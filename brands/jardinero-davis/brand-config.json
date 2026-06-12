@@ -1,31 +1,55 @@
 {
   "brand_id": "jardinero-davis",
   "brand_name": "Jardinero Davis",
-  "description": "Servicios de jardinería, paisajismo y mantenimiento de exteriores en Panamá.",
-  "active_status": "active",
-  "facebook_page_id": "JARDINERO_DAVIS_FACEBOOK_PAGE_ID",
-  "instagram_business_id": "JARDINERO_DAVIS_IG_BUSINESS_ID",
-  "meta_ad_account_id": "JARDINERO_DAVIS_AD_ACCOUNT_ID",
-  "whatsapp_business_account_id": "JARDINERO_DAVIS_WABA_ID",
-  "whatsapp_phone_number_id": "JARDINERO_DAVIS_PHONE_NUMBER_ID",
-  "channels": {
-    "instagram": true,
-    "facebook": true,
-    "whatsapp": true,
-    "ads": true
-  },
-  "escalation_channels": {
-    "primary": "whatsapp",
-    "contact": "JARDINERO_DAVIS_ESCALATION_NUMBER"
-  },
-  "auto_response_enabled": false,
-  "require_human_approval_for": [
-    "pricing",
-    "availability",
-    "project_quotes",
-    "contracts"
+  "business_unit": "Jardinería y paisajismo",
+  "active_status": true,
+  "facebook_page_id": "PLACEHOLDER_JARDINERO_DAVIS_FACEBOOK_PAGE_ID",
+  "instagram_business_id": "PLACEHOLDER_JARDINERO_DAVIS_IG_BUSINESS_ID",
+  "whatsapp_waba_id": "PLACEHOLDER_JARDINERO_DAVIS_WABA_ID",
+  "whatsapp_phone_number_id": "PLACEHOLDER_JARDINERO_DAVIS_PHONE_NUMBER_ID",
+  "meta_ad_account_id": "PLACEHOLDER_JARDINERO_DAVIS_AD_ACCOUNT_ID",
+  "crm_sheet_id": "PLACEHOLDER_JARDINERO_DAVIS_GOOGLE_SHEET_ID",
+  "default_language": "es",
+  "tone_profile": "Confiable, cercano, profesional, orientado a resultados visuales. No prometer tiempos de transformación sin visita previa. No dar cotizaciones sin evaluar el espacio.",
+  "services": [
+    "Mantenimiento de jardines (corte, poda, fertilización, limpieza)",
+    "Diseño y paisajismo de exteriores",
+    "Jardines verticales y muros verdes",
+    "Mantenimiento de áreas corporativas y condominios",
+    "Preparación de jardines para eventos"
   ],
-  "do_not_contact_list": [],
-  "timezone": "America/Panama",
-  "language": "es"
+  "pricing_rules": {
+    "can_auto_share_prices": false,
+    "requires_human_for_quote": true,
+    "notes": "No dar cotización sin conocer tamaño del espacio, tipo de suelo y servicio específico. Requiere visita o fotos previas."
+  },
+  "human_approval_required_for": [
+    "cotizacion",
+    "disponibilidad",
+    "contrato",
+    "descuento",
+    "reclamo",
+    "campaign_change"
+  ],
+  "allowed_automations": [
+    "intent_classification",
+    "lead_scoring",
+    "initial_response_generic",
+    "service_information",
+    "portfolio_sharing",
+    "campaign_reporting"
+  ],
+  "blocked_automations": [
+    "price_quoting",
+    "availability_confirmation",
+    "contract_sending",
+    "cold_dm",
+    "campaign_modification"
+  ],
+  "responsible_users": ["Ricardo"],
+  "escalation_channels": {
+    "whatsapp": "PLACEHOLDER_RICARDO_WHATSAPP",
+    "email": "kmediafilms@gmail.com",
+    "n8n_notification": true
+  }
 }
