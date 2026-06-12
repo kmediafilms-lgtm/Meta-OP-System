@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "wedo-meta-os/product",
+  "title": "Product",
+  "description": "WEDO Meta OS Product Registry entry. Defines a business unit and its Meta connection configuration. Adding a new product requires only creating a brand-config.json conforming to this schema — no code changes.",
+  "type": "object",
+  "required": [
+    "product_id",
+    "brand_id",
+    "product_name",
+    "slug",
+    "active_status",
+    "activation_status",
+    "default_language",
+    "tone_profile",
+    "services",
+    "responsible_users"
+  ],
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "Unique product identifier (same as brand_id for backward compat)"
+    },
+    "brand_id": {
+      "type": "string",
+      "description": "Canonical ID used throughout the system (lowercase-kebab)",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Human-readable product name"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-safe identifier (same as brand_id)",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "active_status": {
+      "type": "boolean",
+      "description": "Legacy field — true for non-archived products"
+    },
+    "activation_status": {
+      "type": "string",
+      "enum": ["draft", "testing", "active", "paused", "archived"],
+      "description": "Current lifecycle state. draft=configured, testing=routing validated, active=live, paused=temporarily off, archived=retired"
+    },
+    "facebook_page_id": {
+      "type": "string",
+      "description": "Facebook Page numeric ID"
+    },
+    "instagram_business_id": {
+      "type": "string",
+      "description": "Instagram Business Account ID (IGSID)"
+    },
+    "meta_ad_account_id": {
+      "type": "string",
+      "description": "Meta Ads Account ID (act_XXXXXXXXX)"
+    },
+    "whatsapp_phone_number_id": {
+      "type": "string",
+      "description": "WhatsApp Cloud API Phone Number ID"
+    },
+    "tone_profile": {
+      "type": "string",
+      "description": "Tone identifier referencing brands/<slug>/tone-guide.md"
+    },
+    "services": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of services offered by this product"
+    },
+    "routing_rules": {
+      "type": "object",
+      "description": "Optional custom routing overrides. Normally derived from Meta IDs.",
+      "properties": {
+        "match_facebook_page_id": { "type": "boolean" },
+        "match_instagram_business_id": { "type": "boolean" },
+        "match_ad_account_id": { "type": "boolean" },
+        "match_phone_number_id": { "type": "boolean" }
+      }
+    },
+    "human_approval_required_for": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of intents or action_types that always require human approval for this product",
+      "examples": [["precio", "cotizacion", "reclamo", "paquetes_boda"]]
+    },
+    "business_unit": {
+      "type": "string",
+      "description": "Business category / industry"
+    },
+    "default_language": {
+      "type": "string",
+      "default": "es"
+    },
+    "responsible_users": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of usernames responsible for approving actions for this product"
+    },
+    "onboarding_status": {
+      "type": "object",
+      "description": "Tracks onboarding progress",
+      "properties": {
+        "brand_config_created": { "type": "boolean" },
+        "meta_ids_confirmed": { "type": "boolean" },
+        "routing_validated": { "type": "boolean" },
+        "n8n_workflow_added": { "type": "boolean" },
+        "human_approved_for_live": { "type": "boolean" }
+      }
+    },
+    "meta_connection_status": {
+      "type": "string",
+      "enum": ["not_configured", "configured", "verified", "live"],
+      "description": "Status of the Meta API connection"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "if": {
+    "properties": { "activation_status": { "enum": ["active", "testing"] } }
+  },
+  "then": {
+    "required": ["facebook_page_id", "instagram_business_id"]
+  }
+}

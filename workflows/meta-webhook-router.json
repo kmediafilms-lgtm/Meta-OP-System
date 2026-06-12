@@ -1,5 +1,6 @@
 {
   "name": "meta-webhook-router",
+  "active": false,
   "description": "Router central de webhooks de Meta. Identifica la marca por los IDs del payload y enruta al workflow correcto.",
   "trigger": {
     "type": "webhook",
@@ -76,12 +77,12 @@
     },
     {
       "id": "7",
-      "name": "Alert Unidentified Brand",
-      "type": "n8n-nodes-base.whatsApp",
+      "name": "Alert Unidentified Brand [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
       "parameters": {
-        "to": "PLACEHOLDER_RICARDO_WHATSAPP",
-        "message": "⚠️ ALERTA: Evento de Meta recibido sin brand_id identificable. Revisar logs.",
-        "note": "Ejecutar solo cuando brand_id sea null"
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
       }
     }
   ],

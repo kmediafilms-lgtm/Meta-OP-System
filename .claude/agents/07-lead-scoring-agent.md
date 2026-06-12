@@ -27,7 +27,7 @@ Score 40-74   → TIBIO    → Seguimiento programado, nurturing con valor
 Score 0-39    → FRÍO     → Seguimiento mínimo, no invertir tiempo hasta señales de calor
 ```
 
-## Reglas por marca
+## Reglas por producto activo
 
 ### KMediaFilms
 - Caliente: empresa, evento específico, presupuesto mencionado, fecha clara
@@ -42,13 +42,8 @@ Score 0-39    → FRÍO     → Seguimiento mínimo, no invertir tiempo hasta se
 - Caliente: fecha y destino específicos, grupo definido, pregunta de confirmación
 - Frío: pregunta genérica de precios sin fecha
 
-### Jardinero Davis
-- Caliente: tiene propiedad específica, describe el proyecto, pide visita o cotización
-- Frío: "¿cuánto cuesta limpiar un jardín?" sin contexto
-
-### FC Guía Panamá
-- Caliente: fecha de viaje definida, grupo de personas, destino específico en mente
-- Frío: "¿qué tours tienen?" sin fecha ni grupo
+### Productos futuros
+El campo `product_context.scoring_rules` en el input puede incluir reglas adicionales. Aplica las mismas dimensiones de scoring a cualquier producto nuevo — el sistema es extensible sin cambios en este agente.
 
 ## Output por lead evaluado
 

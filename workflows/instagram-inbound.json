@@ -1,5 +1,6 @@
 {
   "name": "instagram-inbound",
+  "active": false,
   "description": "Procesa mensajes, comentarios y story replies de Instagram por marca.",
   "trigger": {
     "type": "sub_workflow",
@@ -68,10 +69,12 @@
     },
     {
       "id": "8",
-      "name": "Send Instagram Reply",
-      "type": "n8n-nodes-base.facebookGraphApi",
+      "name": "Send Instagram Reply [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
       "parameters": {
-        "note": "Enviar respuesta por Graph API — endpoint: /v21.0/{message_id}/replies o /{ig_user_id}/messages"
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
       }
     },
     {

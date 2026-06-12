@@ -1,5 +1,6 @@
 {
   "name": "weekly-report",
+  "active": false,
   "description": "Reporte semanal completo: campañas + leads + conversaciones + seguimientos pendientes.",
   "trigger": { "type": "schedule", "cron": "0 22 * * 0", "note": "Cada domingo a las 10pm para entregar el lunes" },
   "nodes": [
@@ -16,6 +17,15 @@
       "parameters": { "note": "Consolidar todo y generar reporte ejecutivo multi-marca con recomendaciones" }
     },
     { "id": "8", "name": "Save Weekly Report" },
-    { "id": "9", "name": "Send to Ricardo", "type": "n8n-nodes-base.whatsApp" }
+    {
+      "id": "9",
+      "name": "Send to Ricardo [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
+      "parameters": {
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
+      }
+    }
   ]
 }

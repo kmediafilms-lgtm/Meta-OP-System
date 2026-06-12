@@ -1,5 +1,6 @@
 {
   "name": "human-approval",
+  "active": false,
   "description": "Gestiona el proceso de aprobación humana para mensajes sensibles y acciones de campaña.",
   "trigger": {
     "type": "sub_workflow",
@@ -26,10 +27,12 @@
     },
     {
       "id": "4",
-      "name": "Send Approval Request",
-      "type": "n8n-nodes-base.whatsApp",
+      "name": "Send Approval Request [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
       "parameters": {
-        "note": "Enviar mensaje de aprobación al responsable de la marca según brand-config.json → escalation_channels"
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
       }
     },
     {
@@ -58,7 +61,16 @@
     { "id": "7", "name": "Execute Original Action", "type": "n8n-nodes-base.executeWorkflow", "parameters": { "note": "Ejecutar la acción aprobada" } },
     { "id": "8", "name": "Execute With Edited Content", "type": "n8n-nodes-base.executeWorkflow", "parameters": { "note": "Ejecutar con el contenido editado por el responsable" } },
     { "id": "9", "name": "Cancel Action", "type": "n8n-nodes-base.noOp", "parameters": { "note": "Registrar rechazo y no ejecutar nada" } },
-    { "id": "10", "name": "Handle Timeout", "type": "n8n-nodes-base.whatsApp", "parameters": { "note": "Notificar que la aprobación expiró sin respuesta" } },
+    {
+      "id": "10",
+      "name": "Handle Timeout [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
+      "parameters": {
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
+      }
+    },
     {
       "id": "11",
       "name": "Update Approval Record",

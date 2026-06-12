@@ -1,5 +1,6 @@
 {
   "name": "campaign-reporting",
+  "active": false,
   "description": "Genera reportes de campañas por marca y reporte consolidado. Solo lectura — no ejecuta cambios.",
   "trigger": { "type": "schedule", "cron": "0 8 * * 1", "note": "Cada lunes a las 8am, o manual" },
   "nodes": [
@@ -51,9 +52,13 @@
     { "id": "10", "name": "Save Master Report", "type": "n8n-nodes-base.googleSheets" },
     {
       "id": "11",
-      "name": "Send Report to Ricardo",
-      "type": "n8n-nodes-base.whatsApp",
-      "parameters": { "note": "Entregar reporte consolidado a Ricardo" }
+      "name": "Send Report to Ricardo [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
+      "parameters": {
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
+      }
     }
   ],
   "important_note": "Este workflow es SOLO LECTURA. No modifica campañas. Los cambios requieren aprobación humana explícita."

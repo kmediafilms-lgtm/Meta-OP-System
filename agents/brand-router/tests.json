@@ -1,0 +1,41 @@
+{
+  "agent": "brand-router",
+  "tests": [
+    {
+      "id": "BR-01",
+      "description": "Ana IG ID detecta correctamente",
+      "input": { "source_ig_id": "17841450875047591", "event_type": "instagram_dm" },
+      "expected": { "brand_id": "ana", "channel": "instagram", "requires_human": false }
+    },
+    {
+      "id": "BR-02",
+      "description": "DRIVIP IG ID detecta correctamente",
+      "input": { "source_ig_id": "17841447217470964", "event_type": "instagram_dm" },
+      "expected": { "brand_id": "drivip", "channel": "instagram", "requires_human": false }
+    },
+    {
+      "id": "BR-03",
+      "description": "KMediaFilms IG ID detecta correctamente",
+      "input": { "source_ig_id": "17841400348662832", "event_type": "instagram_dm" },
+      "expected": { "brand_id": "kmediafilms", "channel": "instagram", "requires_human": false }
+    },
+    {
+      "id": "BR-04",
+      "description": "ID desconocido escala a humano",
+      "input": { "source_ig_id": "UNKNOWN_9999", "event_type": "instagram_dm" },
+      "expected": { "brand_id": "unidentified", "requires_human": true }
+    },
+    {
+      "id": "BR-05",
+      "description": "Ad account Ana detecta correctamente",
+      "input": { "source_ad_account_id": "act_2189268925168947", "event_type": "ad_account_event" },
+      "expected": { "brand_id": "ana", "channel": "ads", "requires_human": false }
+    },
+    {
+      "id": "BR-06",
+      "description": "Facebook page ID Ana detecta correctamente",
+      "input": { "source_page_id": "1043326452200695", "event_type": "facebook_comment" },
+      "expected": { "brand_id": "ana", "channel": "facebook", "requires_human": false }
+    }
+  ]
+}
