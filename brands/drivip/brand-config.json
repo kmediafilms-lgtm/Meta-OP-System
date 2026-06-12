@@ -1,0 +1,55 @@
+{
+  "brand_id": "drivip",
+  "brand_name": "DRIVIP",
+  "business_unit": "Transporte privado y traslados",
+  "active_status": true,
+  "facebook_page_id": "PLACEHOLDER_DRIVIP_FACEBOOK_PAGE_ID",
+  "instagram_business_id": "PLACEHOLDER_DRIVIP_IG_BUSINESS_ID",
+  "whatsapp_waba_id": "PLACEHOLDER_DRIVIP_WABA_ID",
+  "whatsapp_phone_number_id": "PLACEHOLDER_DRIVIP_PHONE_NUMBER_ID",
+  "meta_ad_account_id": "PLACEHOLDER_DRIVIP_AD_ACCOUNT_ID",
+  "crm_sheet_id": "PLACEHOLDER_DRIVIP_GOOGLE_SHEET_ID",
+  "default_language": "es",
+  "tone_profile": "Confiable, claro, premium, operacional. Eficiente y seguro. No inventar precios, disponibilidad, conductores ni confirmaciones.",
+  "services": [
+    "Traslados aeropuerto - hotel",
+    "Traslados punto a punto en Panamá",
+    "Tours privados",
+    "Servicios ejecutivos para empresas",
+    "Transportación para eventos"
+  ],
+  "pricing_rules": {
+    "can_auto_share_prices": false,
+    "requires_human_for_quote": true,
+    "notes": "No dar precios sin conocer ruta, fecha, hora y número de pasajeros. Las cotizaciones las confirma el equipo operativo."
+  },
+  "human_approval_required_for": [
+    "precio",
+    "cotizacion",
+    "confirmacion_reserva",
+    "asignacion_conductor",
+    "reclamo",
+    "descuento",
+    "campaign_change"
+  ],
+  "allowed_automations": [
+    "intent_classification",
+    "lead_scoring",
+    "initial_response_generic",
+    "service_information",
+    "campaign_reporting"
+  ],
+  "blocked_automations": [
+    "price_confirmation",
+    "driver_assignment",
+    "booking_confirmation",
+    "cold_dm",
+    "campaign_modification"
+  ],
+  "responsible_users": ["Ricardo"],
+  "escalation_channels": {
+    "whatsapp": "PLACEHOLDER_RICARDO_WHATSAPP",
+    "email": "kmediafilms@gmail.com",
+    "n8n_notification": true
+  }
+}

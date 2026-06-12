@@ -1,0 +1,73 @@
+{
+  "name": "human-approval",
+  "description": "Gestiona el proceso de aprobación humana para mensajes sensibles y acciones de campaña.",
+  "trigger": {
+    "type": "sub_workflow",
+    "input_required": ["brand_id", "action_type", "payload", "reason", "risk_level", "draft_response"]
+  },
+  "nodes": [
+    { "id": "1", "name": "Input", "type": "trigger" },
+    {
+      "id": "2",
+      "name": "Create Approval Record",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": {
+        "operation": "append",
+        "note": "Crear registro en hoja de Aprobaciones del CRM de la marca con status=pending"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Format Alert Message",
+      "type": "n8n-nodes-base.code",
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst riskEmoji = data.risk_level === 'critical' ? '🚨' : data.risk_level === 'high' ? '⚠️' : '🔔';\nconst message = `${riskEmoji} APROBACIÓN REQUERIDA — ${data.brand_id.toUpperCase()}\nTipo: ${data.action_type}\nRiesgo: ${data.risk_level.toUpperCase()}\n\nContexto:\n${data.reason}\n\nRespuesta sugerida:\n\"${data.draft_response || 'Ver payload'}\"\n\nOpciones:\n✅ APROBAR → Responder OK\n✏️ EDITAR → Enviar texto corregido\n❌ RECHAZAR → Responder NO\n\nExpira en: ${data.risk_level === 'critical' ? '15 minutos' : data.risk_level === 'high' ? '2 horas' : '24 horas'}`;\nreturn { ...data, alert_message: message };"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Send Approval Request",
+      "type": "n8n-nodes-base.whatsApp",
+      "parameters": {
+        "note": "Enviar mensaje de aprobación al responsable de la marca según brand-config.json → escalation_channels"
+      }
+    },
+    {
+      "id": "5",
+      "name": "Wait for Response",
+      "type": "n8n-nodes-base.wait",
+      "parameters": {
+        "note": "Esperar respuesta del responsable con timeout según risk_level"
+      }
+    },
+    {
+      "id": "6",
+      "name": "Process Decision",
+      "type": "n8n-nodes-base.switch",
+      "parameters": {
+        "rules": {
+          "string": [
+            { "value": "approved", "output": 0 },
+            { "value": "edited", "output": 1 },
+            { "value": "rejected", "output": 2 },
+            { "value": "expired", "output": 3 }
+          ]
+        }
+      }
+    },
+    { "id": "7", "name": "Execute Original Action", "type": "n8n-nodes-base.executeWorkflow", "parameters": { "note": "Ejecutar la acción aprobada" } },
+    { "id": "8", "name": "Execute With Edited Content", "type": "n8n-nodes-base.executeWorkflow", "parameters": { "note": "Ejecutar con el contenido editado por el responsable" } },
+    { "id": "9", "name": "Cancel Action", "type": "n8n-nodes-base.noOp", "parameters": { "note": "Registrar rechazo y no ejecutar nada" } },
+    { "id": "10", "name": "Handle Timeout", "type": "n8n-nodes-base.whatsApp", "parameters": { "note": "Notificar que la aprobación expiró sin respuesta" } },
+    {
+      "id": "11",
+      "name": "Update Approval Record",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": { "operation": "update", "note": "Cerrar el registro con el resultado final" }
+    }
+  ],
+  "credentials_required": [
+    "WhatsApp Business Cloud",
+    "Google Sheets"
+  ]
+}

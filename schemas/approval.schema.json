@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Approval",
+  "description": "Solicitud de aprobación humana para una acción del sistema",
+  "type": "object",
+  "required": ["id", "brand_id", "action_type", "requested_by", "payload", "reason", "risk_level", "status", "created_at"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "brand_id": { "type": "string" },
+    "action_type": { "type": "string", "enum": ["send_message", "campaign_change", "followup", "quote", "discount", "contract", "other"] },
+    "requested_by": { "type": "string", "description": "system o nombre del agente" },
+    "payload": { "type": "object", "description": "La acción que se quiere ejecutar" },
+    "reason": { "type": "string" },
+    "risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "status": { "type": "string", "enum": ["pending", "approved", "rejected", "expired"] },
+    "approved_by": { "type": ["string", "null"] },
+    "rejection_reason": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Brand",
+  "description": "Configuración completa de una marca en el sistema KMedia Meta OS WEDO",
+  "type": "object",
+  "required": ["brand_id", "brand_name", "facebook_page_id", "instagram_business_id", "meta_ad_account_id", "active_status"],
+  "properties": {
+    "brand_id": { "type": "string", "description": "Slug único de la marca (ej: kmediafilms, ana, drivip)" },
+    "brand_name": { "type": "string" },
+    "business_unit": { "type": "string" },
+    "active_status": { "type": "boolean" },
+    "facebook_page_id": { "type": "string" },
+    "instagram_business_id": { "type": "string" },
+    "whatsapp_waba_id": { "type": ["string", "null"] },
+    "whatsapp_phone_number_id": { "type": ["string", "null"] },
+    "meta_ad_account_id": { "type": "string" },
+    "crm_sheet_id": { "type": ["string", "null"] },
+    "default_language": { "type": "string", "enum": ["es", "en"] },
+    "tone_profile": { "type": "string", "description": "Descripción resumida del tono de la marca" },
+    "services": { "type": "array", "items": { "type": "string" } },
+    "pricing_rules": {
+      "type": "object",
+      "properties": {
+        "can_auto_share_prices": { "type": "boolean" },
+        "requires_human_for_quote": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "human_approval_required_for": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lista de tipos de acción que requieren aprobación humana"
+    },
+    "allowed_automations": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "blocked_automations": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "responsible_users": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "escalation_channels": {
+      "type": "object",
+      "properties": {
+        "whatsapp": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"] },
+        "n8n_notification": { "type": "boolean" }
+      }
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "name": "meta-webhook-router",
+  "description": "Router central de webhooks de Meta. Identifica la marca por los IDs del payload y enruta al workflow correcto.",
+  "trigger": {
+    "type": "webhook",
+    "method": "POST",
+    "path": "/webhook/meta",
+    "verification": {
+      "method": "GET",
+      "verify_token_env": "META_VERIFY_TOKEN"
+    }
+  },
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Webhook Receiver",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "meta-webhook",
+        "responseMode": "onReceived"
+      }
+    },
+    {
+      "id": "2",
+      "name": "Normalize Payload",
+      "type": "n8n-nodes-base.code",
+      "parameters": {
+        "jsCode": "// Extraer identificadores del payload de Meta\nconst body = $input.first().json;\nconst object = body.object;\nconst entries = body.entry || [];\n\nlet normalized = {\n  raw: body,\n  object_type: object,\n  source_ids: [],\n  event_type: 'unknown',\n  brand_id: null\n};\n\nfor (const entry of entries) {\n  if (entry.id) normalized.source_ids.push(entry.id);\n  // Detectar tipo de evento\n  if (entry.messaging) normalized.event_type = object === 'instagram' ? 'instagram_dm' : 'facebook_message';\n  if (entry.changes) {\n    const field = entry.changes[0]?.field;\n    if (field === 'comments') normalized.event_type = 'instagram_comment';\n    if (field === 'messages' && entry.changes[0]?.value?.messaging_product === 'whatsapp') {\n      normalized.event_type = 'whatsapp_message';\n      const phoneId = entry.changes[0]?.value?.metadata?.phone_number_id;\n      if (phoneId) normalized.source_ids.push('phone:' + phoneId);\n    }\n  }\n}\n\nreturn normalized;"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Detect Brand",
+      "type": "n8n-nodes-base.code",
+      "parameters": {
+        "jsCode": "// Mapa de IDs a brand_id (completar con valores reales del .env)\nconst BRAND_MAP = {\n  [process.env.KMEDIA_FACEBOOK_PAGE_ID]: 'kmediafilms',\n  [process.env.KMEDIA_IG_BUSINESS_ID]: 'kmediafilms',\n  [process.env.ANA_FACEBOOK_PAGE_ID]: 'ana',\n  [process.env.ANA_IG_BUSINESS_ID]: 'ana',\n  ['phone:' + process.env.ANA_PHONE_NUMBER_ID]: 'ana',\n  [process.env.DRIVIP_FACEBOOK_PAGE_ID]: 'drivip',\n  [process.env.DRIVIP_IG_BUSINESS_ID]: 'drivip',\n  ['phone:' + process.env.DRIVIP_PHONE_NUMBER_ID]: 'drivip',\n};\n\nconst data = $input.first().json;\nlet brand_id = null;\nlet routing_method = 'no_match';\n\nfor (const id of data.source_ids) {\n  if (BRAND_MAP[id]) {\n    brand_id = BRAND_MAP[id];\n    routing_method = 'id_match:' + id;\n    break;\n  }\n}\n\nreturn { ...data, brand_id, routing_method, timestamp: new Date().toISOString() };"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Brand Identified?",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "string": [{ "value1": "={{$json.brand_id}}", "operation": "isNotEmpty" }]
+        }
+      }
+    },
+    {
+      "id": "5",
+      "name": "Route by Event Type",
+      "type": "n8n-nodes-base.switch",
+      "parameters": {
+        "dataPropertyName": "event_type",
+        "rules": {
+          "string": [
+            { "value": "instagram_dm", "output": 0 },
+            { "value": "instagram_comment", "output": 1 },
+            { "value": "whatsapp_message", "output": 2 },
+            { "value": "facebook_message", "output": 3 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6",
+      "name": "Save Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": {
+        "operation": "append",
+        "sheetId": "PLACEHOLDER_MASTER_LOG_SHEET_ID",
+        "range": "Logs!A:Z",
+        "note": "Loguear brand_id, event_type, routing_method, timestamp"
+      }
+    },
+    {
+      "id": "7",
+      "name": "Alert Unidentified Brand",
+      "type": "n8n-nodes-base.whatsApp",
+      "parameters": {
+        "to": "PLACEHOLDER_RICARDO_WHATSAPP",
+        "message": "⚠️ ALERTA: Evento de Meta recibido sin brand_id identificable. Revisar logs.",
+        "note": "Ejecutar solo cuando brand_id sea null"
+      }
+    }
+  ],
+  "connections": {
+    "1_to_2": "normalize payload",
+    "2_to_3": "detect brand",
+    "3_to_4": "check if identified",
+    "4_true_to_5": "route by type",
+    "4_false_to_7": "alert unidentified",
+    "all_to_6": "always log"
+  },
+  "credentials_required": [
+    "Meta App credentials (META_APP_ID, META_APP_SECRET, META_VERIFY_TOKEN)",
+    "Google Sheets credentials",
+    "WhatsApp Business Cloud credentials (for alerts)"
+  ],
+  "setup_notes": [
+    "1. Importar este workflow en n8n",
+    "2. Configurar variables de entorno con IDs reales",
+    "3. Registrar la URL del webhook en Meta Developer Console",
+    "4. Verificar con el challenge de Meta antes de activar",
+    "5. Probar con route-test-events.js antes de usar en producción"
+  ]
+}

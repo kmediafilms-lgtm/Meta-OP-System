@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Followup",
+  "description": "Seguimiento programado para un lead",
+  "type": "object",
+  "required": ["id", "brand_id", "lead_id", "channel", "followup_day", "scheduled_at", "status"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "brand_id": { "type": "string" },
+    "lead_id": { "type": "string" },
+    "conversation_id": { "type": ["string", "null"] },
+    "channel": { "type": "string", "enum": ["instagram", "whatsapp", "facebook", "manual"] },
+    "followup_day": { "type": "integer", "enum": [0, 1, 3, 7] },
+    "scheduled_at": { "type": "string", "format": "date-time" },
+    "message_type": { "type": "string", "enum": ["free_form", "template"] },
+    "template_id": { "type": ["string", "null"] },
+    "draft_message": { "type": ["string", "null"] },
+    "status": { "type": "string", "enum": ["pending", "sent", "cancelled", "expired"] },
+    "approved_by": { "type": ["string", "null"] },
+    "sent_at": { "type": ["string", "null"], "format": "date-time" },
+    "result": { "type": ["string", "null"], "enum": ["responded", "no_response", "unsubscribed", null] }
+  }
+}

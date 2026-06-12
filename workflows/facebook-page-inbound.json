@@ -1,0 +1,40 @@
+{
+  "name": "facebook-page-inbound",
+  "description": "Procesa comentarios, mensajes y leads de Facebook Pages.",
+  "trigger": { "type": "facebook_trigger", "object": "page" },
+  "nodes": [
+    { "id": "1", "name": "Facebook Trigger", "type": "n8n-nodes-base.facebookTrigger" },
+    {
+      "id": "2",
+      "name": "Detect Brand by Page ID",
+      "type": "n8n-nodes-base.code",
+      "parameters": { "note": "Mapear entry.id (Page ID) a brand_id" }
+    },
+    { "id": "3", "name": "Load Brand Config" },
+    {
+      "id": "4",
+      "name": "Classify Event Type",
+      "type": "n8n-nodes-base.switch",
+      "parameters": {
+        "rules": {
+          "string": [
+            { "value": "message", "output": 0 },
+            { "value": "comment", "output": 1 },
+            { "value": "lead", "output": 2 }
+          ]
+        }
+      }
+    },
+    { "id": "5", "name": "Save Lead/Message to CRM", "type": "n8n-nodes-base.googleSheets" },
+    { "id": "6", "name": "Claude: Classify + Score", "type": "n8n-nodes-base.httpRequest" },
+    {
+      "id": "7",
+      "name": "Decide Action",
+      "type": "n8n-nodes-base.if",
+      "parameters": { "note": "Responder automático o escalar a humano" }
+    },
+    { "id": "8", "name": "Facebook Graph API: Respond", "type": "n8n-nodes-base.facebookGraphApi" },
+    { "id": "9", "name": "Human Approval Flow", "type": "n8n-nodes-base.executeWorkflow" },
+    { "id": "10", "name": "Log Result" }
+  ]
+}

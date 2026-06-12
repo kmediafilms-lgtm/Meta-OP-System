@@ -1,0 +1,21 @@
+{
+  "name": "weekly-report",
+  "description": "Reporte semanal completo: campañas + leads + conversaciones + seguimientos pendientes.",
+  "trigger": { "type": "schedule", "cron": "0 22 * * 0", "note": "Cada domingo a las 10pm para entregar el lunes" },
+  "nodes": [
+    { "id": "1", "name": "Schedule Trigger" },
+    { "id": "2", "name": "Get Week Metrics per Brand", "type": "n8n-nodes-base.code" },
+    { "id": "3", "name": "Get Campaign Data", "note": "Igual que campaign-reporting" },
+    { "id": "4", "name": "Get Lead Summary per Brand", "type": "n8n-nodes-base.googleSheets", "parameters": { "note": "Leads nuevos, respondidos, perdidos, reservas de la semana" } },
+    { "id": "5", "name": "Get Open Conversations Without Response", "type": "n8n-nodes-base.googleSheets", "parameters": { "note": "Conversaciones abiertas sin respuesta en más de 48h" } },
+    { "id": "6", "name": "Get Pending Approvals", "type": "n8n-nodes-base.googleSheets", "parameters": { "note": "Aprobaciones no resueltas" } },
+    {
+      "id": "7",
+      "name": "Claude: Generate Full Weekly Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": { "note": "Consolidar todo y generar reporte ejecutivo multi-marca con recomendaciones" }
+    },
+    { "id": "8", "name": "Save Weekly Report" },
+    { "id": "9", "name": "Send to Ricardo", "type": "n8n-nodes-base.whatsApp" }
+  ]
+}

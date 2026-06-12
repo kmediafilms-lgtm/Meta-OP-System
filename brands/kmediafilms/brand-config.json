@@ -1,0 +1,54 @@
+{
+  "brand_id": "kmediafilms",
+  "brand_name": "KMediaFilms",
+  "business_unit": "Producción audiovisual",
+  "active_status": true,
+  "facebook_page_id": "PLACEHOLDER_KMEDIA_FACEBOOK_PAGE_ID",
+  "instagram_business_id": "PLACEHOLDER_KMEDIA_IG_BUSINESS_ID",
+  "whatsapp_waba_id": null,
+  "whatsapp_phone_number_id": null,
+  "meta_ad_account_id": "PLACEHOLDER_KMEDIA_AD_ACCOUNT_ID",
+  "crm_sheet_id": "PLACEHOLDER_KMEDIA_GOOGLE_SHEET_ID",
+  "default_language": "es",
+  "tone_profile": "Profesional, creativo, directo, premium boutique. Sin prometer fechas, entregas ni precios sin validación humana.",
+  "services": [
+    "Videos corporativos",
+    "Comerciales",
+    "Cobertura de eventos",
+    "Fotografía",
+    "Contenido vertical para redes sociales"
+  ],
+  "pricing_rules": {
+    "can_auto_share_prices": false,
+    "requires_human_for_quote": true,
+    "notes": "Nunca dar precios cerrados en DM. Solicitar brief antes de cotizar."
+  },
+  "human_approval_required_for": [
+    "precio",
+    "cotizacion",
+    "contrato",
+    "reserva",
+    "descuento",
+    "reclamo",
+    "campaign_change"
+  ],
+  "allowed_automations": [
+    "intent_classification",
+    "lead_scoring",
+    "portafolio_sharing",
+    "initial_response_generic",
+    "campaign_reporting"
+  ],
+  "blocked_automations": [
+    "price_quoting",
+    "campaign_modification",
+    "contract_sending",
+    "cold_dm"
+  ],
+  "responsible_users": ["Ricardo"],
+  "escalation_channels": {
+    "whatsapp": "PLACEHOLDER_RICARDO_WHATSAPP",
+    "email": "kmediafilms@gmail.com",
+    "n8n_notification": true
+  }
+}

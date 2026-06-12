@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Conversation",
+  "description": "Hilo de conversación completo con un contacto",
+  "type": "object",
+  "required": ["id", "brand_id", "platform", "contact_id"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "brand_id": { "type": "string" },
+    "platform": { "type": "string", "enum": ["instagram", "whatsapp", "facebook"] },
+    "contact_id": { "type": "string" },
+    "contact_name": { "type": ["string", "null"] },
+    "lead_id": { "type": ["string", "null"] },
+    "status": { "type": "string", "enum": ["open", "closed", "pending_human", "do_not_contact"] },
+    "current_intent": { "type": ["string", "null"] },
+    "lead_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "first_message_at": { "type": "string", "format": "date-time" },
+    "last_message_at": { "type": "string", "format": "date-time" },
+    "message_count": { "type": "integer" },
+    "assigned_to": { "type": ["string", "null"] },
+    "next_action": { "type": ["string", "null"] },
+    "escalation_required": { "type": "boolean", "default": false },
+    "escalation_reason": { "type": ["string", "null"] }
+  }
+}

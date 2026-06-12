@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Message",
+  "description": "Mensaje recibido o enviado en cualquier plataforma",
+  "type": "object",
+  "required": ["id", "brand_id", "platform", "sender_id", "message_text", "timestamp", "direction"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "brand_id": { "type": "string" },
+    "conversation_id": { "type": "string" },
+    "platform": { "type": "string", "enum": ["instagram", "whatsapp", "facebook"] },
+    "sender_id": { "type": "string" },
+    "sender_name": { "type": ["string", "null"] },
+    "message_text": { "type": "string" },
+    "message_type": { "type": "string", "enum": ["text", "image", "video", "audio", "document", "template", "reaction"] },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "direction": { "type": "string", "enum": ["inbound", "outbound"] },
+    "intent": { "type": ["string", "null"] },
+    "sentiment": { "type": ["string", "null"], "enum": ["positive", "neutral", "negative", null] },
+    "requires_human": { "type": "boolean", "default": false },
+    "response_generated": { "type": ["string", "null"] },
+    "response_sent": { "type": "boolean", "default": false },
+    "approval_status": { "type": ["string", "null"], "enum": ["not_required", "pending", "approved", "rejected", null] }
+  }
+}

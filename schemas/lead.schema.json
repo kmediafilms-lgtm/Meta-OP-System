@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Lead",
+  "description": "Lead capturado a través de cualquier canal de Meta",
+  "type": "object",
+  "required": ["id", "brand_id", "created_at", "source", "channel", "first_message"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "brand_id": { "type": "string", "description": "Marca a la que pertenece este lead" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "source": { "type": "string", "enum": ["instagram_dm", "instagram_comment", "whatsapp", "facebook_message", "meta_lead_form", "click_to_wa", "manual"] },
+    "channel": { "type": "string", "enum": ["instagram", "whatsapp", "facebook", "manual"] },
+    "name": { "type": ["string", "null"] },
+    "instagram_username": { "type": ["string", "null"] },
+    "phone": { "type": ["string", "null"] },
+    "campaign_id": { "type": ["string", "null"] },
+    "ad_id": { "type": ["string", "null"] },
+    "first_message": { "type": "string" },
+    "intent": {
+      "type": "string",
+      "enum": ["precio", "disponibilidad", "paquetes_boda", "video_corporativo", "traslado", "portafolio", "pregunta_general", "cliente_caliente", "cliente_tibio", "cliente_frio", "reclamo", "descuento", "contrato_pago", "spam", "requiere_humano"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["nuevo", "respondido", "cotizacion_solicitada", "cotizacion_enviada", "pendiente_fecha", "pendiente_pago", "reserva_confirmada", "perdido", "no_responde", "bloqueado"]
+    },
+    "lead_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "service_interest": { "type": ["string", "null"] },
+    "event_date": { "type": ["string", "null"], "description": "Fecha del evento del cliente (boda, viaje, etc)" },
+    "budget_range": { "type": ["string", "null"] },
+    "location": { "type": ["string", "null"] },
+    "assigned_to": { "type": ["string", "null"] },
+    "last_contact_at": { "type": ["string", "null"], "format": "date-time" },
+    "next_followup_at": { "type": ["string", "null"], "format": "date-time" },
+    "opt_in_whatsapp": { "type": "boolean", "default": false },
+    "do_not_contact": { "type": "boolean", "default": false },
+    "notes": { "type": ["string", "null"] }
+  }
+}
