@@ -1,0 +1,15 @@
+{
+  "fixture_id": "drivip-low-ctr-good-leads",
+  "brand_id": "drivip",
+  "ad_account_id": "act_1861455161486718",
+  "campaign_id": "cmp_drivip_001",
+  "readonly": true,
+  "metrics": {
+    "ctr": 0.8,
+    "cpc": 1.2,
+    "leads": 12,
+    "qualified_leads": 8,
+    "reservations": 4
+  },
+  "expected_recommendation_mode": "analysis_only"
+}

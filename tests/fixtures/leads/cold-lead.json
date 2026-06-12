@@ -1,0 +1,9 @@
+{
+  "fixture_id": "cold-lead",
+  "brand_id": "drivip",
+  "lead_id": "lead_cold_001",
+  "source": "instagram_dm",
+  "message": "info",
+  "expected_classification": "cold",
+  "expected_requires_human": false
+}

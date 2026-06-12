@@ -1,0 +1,9 @@
+{
+  "fixture_id": "ana-ad-account-event",
+  "expected_brand_id": "ana",
+  "expected_action": "route",
+  "source": "meta_ads",
+  "ad_account_id": "act_2189268925168947",
+  "event_type": "campaign_insights_read",
+  "readonly": true
+}
