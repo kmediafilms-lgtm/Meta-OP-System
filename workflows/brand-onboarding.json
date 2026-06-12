@@ -1,5 +1,6 @@
 {
   "name": "brand-onboarding",
+  "active": false,
   "description": "Checklist guiado para conectar una nueva marca al sistema.",
   "trigger": { "type": "manual", "note": "Activar manualmente cuando se agrega una marca nueva" },
   "nodes": [
@@ -8,7 +9,16 @@
     { "id": "3", "name": "Validate Brand ID Format", "type": "n8n-nodes-base.code" },
     { "id": "4", "name": "Create CRM Sheet", "type": "n8n-nodes-base.googleSheets", "parameters": { "note": "Crear nueva hoja de Google Sheets para el CRM de la marca" } },
     { "id": "5", "name": "Add to Brand Map", "type": "n8n-nodes-base.code", "parameters": { "note": "Agregar Page ID, IG ID, Phone ID al mapa del router" } },
-    { "id": "6", "name": "Send Onboarding Checklist", "type": "n8n-nodes-base.whatsApp", "parameters": { "note": "Enviar checklist de brand-onboarding-checklist.md a Ricardo" } },
+    {
+      "id": "6",
+      "name": "Send Onboarding Checklist [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
+      "parameters": {
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
+      }
+    },
     { "id": "7", "name": "Run Test Payloads", "type": "n8n-nodes-base.executeCommand", "parameters": { "command": "node scripts/validate-brand-configs.js" } },
     { "id": "8", "name": "Log Onboarding", "type": "n8n-nodes-base.googleSheets" }
   ]

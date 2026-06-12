@@ -1,3 +1,13 @@
+> **ARCHIVED — HISTORICAL DOCUMENT — DO NOT USE FOR CURRENT PRODUCT SCOPE**
+>
+> This document is the Codex offline audit report for PR #6 that identified blockers.
+> Those blockers have since been resolved. See current validation state in:
+> - `docs/wedo-os-operating-model.md`
+> - `docs/production-readiness-checklist.md`
+> - `docs/n8n-safe-activation-plan.md`
+
+---
+
 # Codex Offline Audit Report - PR #6
 
 Date: 2026-06-12

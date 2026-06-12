@@ -51,7 +51,7 @@ Future products are added via the Product Registry onboarding flow. See `docs/pr
 ## Supabase
 
 - [ ] Migration `001_initial_schema.sql` applied to project
-- [ ] Seed `001_brands.sql` applied (5 brands)
+- [ ] Seed `001_brands.sql` applied (3 products)
 - [ ] RLS enabled on all 11 tables
 - [ ] Supabase URL and anon key added to Vercel environment variables
 - [ ] Service role key added to n8n variables only (never Vercel public)

@@ -1,11 +1,13 @@
 {
   "_comment": "Example fixture showing how a future product would be added to the Product Registry. Copy this file, fill in real values, and create brands/<slug>/brand-config.json. No code changes required.",
+  "_routing_note": "IMPORTANT: A draft product will NOT route events even if Meta IDs are present. Only activation_status=active or activation_status=testing products are routed. Set activation_status to 'testing' only after IDs are confirmed and routing is validated.",
   "product_id": "nuevo-cliente-ejemplo",
   "brand_id": "nuevo-cliente-ejemplo",
   "product_name": "Nuevo Cliente Ejemplo",
   "slug": "nuevo-cliente-ejemplo",
   "active_status": false,
   "activation_status": "draft",
+  "routing_blocked_reason": "activation_status is draft — only testing/active products route events",
   "business_unit": "Categoría del negocio",
   "default_language": "es",
   "facebook_page_id": "REPLACE_WITH_REAL_PAGE_ID",

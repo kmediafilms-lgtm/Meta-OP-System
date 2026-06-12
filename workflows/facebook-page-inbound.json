@@ -1,5 +1,6 @@
 {
   "name": "facebook-page-inbound",
+  "active": false,
   "description": "Procesa comentarios, mensajes y leads de Facebook Pages.",
   "trigger": { "type": "facebook_trigger", "object": "page" },
   "nodes": [

@@ -6,7 +6,7 @@
 
 ### Completed ✓
 
-- [x] Multi-brand config for all 5 brands (validated)
+- [x] Multi-brand config for 3 current products (validated)
 - [x] Supabase schema — 11 tables, brand_id on all, RLS
 - [x] 8 agent contracts with safety constants
 - [x] 24 agent files (contract.json + prompt.md + tests.json)

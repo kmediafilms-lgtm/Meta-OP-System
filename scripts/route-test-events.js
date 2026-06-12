@@ -11,6 +11,8 @@
 
 const { routeEvent, loadProducts } = require('../lib/product-registry')
 
+const ROUTABLE_STATUSES = ['active', 'testing']
+
 const args = process.argv.slice(2)
 
 if (args.length === 0) {
@@ -20,7 +22,7 @@ if (args.length === 0) {
 
   for (const p of products) {
     const status = p.activation_status ?? (p.active_status === true ? 'active' : 'draft')
-    if (status === 'archived') continue
+    if (!ROUTABLE_STATUSES.includes(status)) continue
 
     if (p.instagram_business_id && !p.instagram_business_id.startsWith('PLACEHOLDER')) {
       testCases.push({ label: `${p.brand_name} via ig_id`, input: { ig_id: p.instagram_business_id }, expected: p.brand_id })
@@ -37,11 +39,29 @@ if (args.length === 0) {
   testCases.push({ label: 'Unknown product (escalate to human)', input: { ig_id: 'unknown_ig_id_000' }, expected: 'unidentified' })
   // Missing IDs must escalate
   testCases.push({ label: 'Missing IDs (escalate to human)', input: {}, expected: 'unidentified' })
+
+  // Draft product with real-looking IDs must NOT route (activation_status = draft blocks routing)
+  testCases.push({
+    label: 'Draft product with IDs (must NOT route — draft status blocked)',
+    input: { ig_id: 'DRAFT_PRODUCT_IG_ID_TEST_000' },
+    expected: 'unidentified',
+  })
+
+  // Paused product must NOT route (activation_status = paused blocks routing)
+  testCases.push({
+    label: 'Paused product IDs (must NOT route — paused status blocked)',
+    input: { ig_id: 'PAUSED_PRODUCT_IG_ID_TEST_000' },
+    expected: 'unidentified',
+  })
+
   // Future product fixture (demonstrates adding without code change)
   const fixturePath = require('path').join(__dirname, '..', 'tests', 'fixtures', 'products', 'new-product-example.json')
   if (require('fs').existsSync(fixturePath)) {
     const fixture = JSON.parse(require('fs').readFileSync(fixturePath, 'utf8'))
-    testCases.push({ label: `Future product fixture (should be unidentified — not in registry)`, input: { ig_id: fixture.instagram_business_id }, expected: 'unidentified' })
+    const fixtureIgId = fixture.instagram_business_id
+    if (fixtureIgId && !fixtureIgId.startsWith('REPLACE_WITH')) {
+      testCases.push({ label: `Future product fixture (draft — should be unidentified)`, input: { ig_id: fixtureIgId }, expected: 'unidentified' })
+    }
   }
 
   console.log('\n=== ROUTE SELF-TEST ===')

@@ -1,5 +1,6 @@
 {
   "name": "lead-scoring",
+  "active": false,
   "description": "Calcula el score de un lead y programa su seguimiento.",
   "trigger": { "type": "sub_workflow", "input_required": ["brand_id", "lead_id", "message_text", "channel", "source"] },
   "nodes": [

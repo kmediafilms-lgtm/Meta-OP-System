@@ -36,7 +36,7 @@ All n8n workflows start INACTIVE. This document is the step-by-step activation p
 **Step A1: Activate WEDO - Router Test Only**
 - Purpose: Validate brand routing with live test payloads
 - Risk: Zero — no Meta API calls, no message sends
-- Test: Run manual trigger, verify all 5 brands route correctly
+- Test: Run manual trigger, verify all 3 products route correctly
 
 **Step A2: Activate WEDO - Ads Read Only Reporter**
 - Purpose: Pull campaign metrics (GET only)

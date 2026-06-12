@@ -2,7 +2,7 @@
 
 ## What is WEDO Meta OS?
 
-WEDO Meta OS is a multi-brand marketing operating system built on top of Meta's platforms (Instagram, Facebook, WhatsApp, Ads). It enables the WEDO consultancy to manage 5 client brands from a single automated system, with strict brand separation, human approval gates, and zero accidental message sends.
+WEDO Meta OS is a multi-brand marketing operating system built on top of Meta's platforms (Instagram, Facebook, WhatsApp, Ads). It enables the WEDO consultancy to manage client products from a single automated system, with strict brand separation, human approval gates, and zero accidental message sends. Current active products: KMediaFilms, En la Galería de Ana, DRIVIP. New products are added via the Product Registry without code changes.
 
 ## System Hierarchy
 
