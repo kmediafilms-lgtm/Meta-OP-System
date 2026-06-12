@@ -3,13 +3,17 @@
 // Simulates: webhook → brand-router → intent-classifier → lead-scoring → copy-conversion → human-approval
 // Zero real API calls. Validates the logic chain is wired correctly.
 
-const BRANDS = {
-  kmediafilms: { brand_id: 'kmediafilms', brand_name: 'KMediaFilms',         meta_ig_id: '17841400348662832', meta_page_id: '1009115316143644' },
-  ana:         { brand_id: 'ana',         brand_name: 'En la Galería de Ana', meta_ig_id: '17841450875047591', meta_page_id: '1043326452200695' },
-  drivip:      { brand_id: 'drivip',      brand_name: 'DRIVIP',               meta_ig_id: '17841447217470964', meta_page_id: '1158307954030806' },
-  'jardinero-davis': { brand_id: 'jardinero-davis', brand_name: 'Jardinero Davis', meta_ig_id: null, meta_page_id: null },
-  'fc-guia-panama':  { brand_id: 'fc-guia-panama',  brand_name: 'FC Guía Panamá',  meta_ig_id: null, meta_page_id: null },
-}
+// WEDO Meta OS — SAFE MODE
+// Product registry loaded dynamically. Add new products via brands/ folder — no code change needed.
+const { loadProducts } = require('../lib/product-registry')
+
+const _products = loadProducts()
+const BRANDS = Object.fromEntries(_products.map(p => [p.brand_id, {
+  brand_id: p.brand_id,
+  brand_name: p.brand_name,
+  meta_ig_id: p.instagram_business_id ?? null,
+  meta_page_id: p.facebook_page_id ?? null,
+}]))
 
 const TEST_EVENTS = [
   { id: 'evt-001', channel: 'instagram_dm', recipient_id: '17841450875047591', sender: 'user_abc', text: 'Hola, quiero información para mi boda en noviembre' },
@@ -19,31 +23,21 @@ const TEST_EVENTS = [
   { id: 'evt-005', channel: 'ad_account',   ad_account_id: 'act_2189268925168947', event: 'lead_form_submit', lead_name: 'María González' },
 ]
 
-// Step 1: Brand Router (mock)
-function brandRouter(event) {
-  let brandId = null
-  let source = null
+// Step 1: Brand Router — uses Product Registry dynamically
+const { routeEvent } = require('../lib/product-registry')
 
-  for (const [id, brand] of Object.entries(BRANDS)) {
-    if (event.recipient_id && event.recipient_id === brand.meta_ig_id) {
-      brandId = id; source = 'ig_id_match'; break
-    }
-    if (event.recipient_id && event.recipient_id === brand.meta_page_id) {
-      brandId = id; source = 'page_id_match'; break
-    }
-    if (event.ad_account_id) {
-      // Match by ad account — simplified for mock
-      if (event.ad_account_id === 'act_2189268925168947') { brandId = 'ana'; source = 'ad_account_match'; break }
-      if (event.ad_account_id === 'act_1861455161486718') { brandId = 'drivip'; source = 'ad_account_match'; break }
-    }
-  }
+function brandRouter(event) {
+  const r = routeEvent({
+    ig_id: event.recipient_id,
+    ad_account_id: event.ad_account_id,
+  })
 
   return {
-    brand_id: brandId,
-    confidence: brandId ? 1.0 : 0,
-    source: source ?? 'no_match',
-    requires_human: !brandId,
-    reason: brandId ? `Matched via ${source}` : 'Brand not identified — escalate to human review',
+    brand_id: r.brand_id === 'unidentified' ? null : r.brand_id,
+    confidence: r.brand_id === 'unidentified' ? 0 : 1.0,
+    source: r.method,
+    requires_human: r.requires_human,
+    reason: r.reason ?? `Matched via ${r.method}`,
   }
 }
 

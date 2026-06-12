@@ -19,8 +19,10 @@ const TABLES_NEEDING_BRAND_ID = [
   'events_log', 'learning_notes',
 ]
 
+// Only the 3 active products are required in the seed.
+// Future products are added via Supabase INSERT — no code change needed.
 const REQUIRED_BRANDS = [
-  'kmediafilms', 'ana', 'drivip', 'jardinero-davis', 'fc-guia-panama',
+  'kmediafilms', 'ana', 'drivip',
 ]
 
 let errors = 0

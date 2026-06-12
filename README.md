@@ -6,15 +6,15 @@ Desarrollado y operado por Ricardo / WEDO.
 
 ---
 
-## Marcas activas
+## Productos activos
 
 | Brand ID | Nombre | Canales |
 |---|---|---|
 | `kmediafilms` | KMediaFilms | Instagram, Facebook, Ads |
 | `ana` | En la Galería de Ana | Instagram, Facebook, WhatsApp, Ads |
 | `drivip` | DRIVIP | Instagram, Facebook, WhatsApp, Ads |
-| `jardinero-davis` | Jardinero Davis | Instagram, Facebook, WhatsApp, Ads |
-| `fc-guia-panama` | FC Guía Panamá | Instagram, Facebook, WhatsApp, Ads |
+
+Nuevos productos se agregan via Product Registry — ver `docs/product-onboarding-model.md`.
 
 ---
 

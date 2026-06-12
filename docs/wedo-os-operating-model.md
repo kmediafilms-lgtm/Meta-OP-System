@@ -8,12 +8,13 @@ WEDO Meta OS is a multi-brand marketing operating system built on top of Meta's 
 
 ```
 WEDO (consultancy layer — this system)
-├── KMediaFilms       — film production studio
-├── En la Galería de Ana — event photography
-├── DRIVIP            — luxury ground transport
-├── Jardinero Davis   — landscaping services
-└── FC Guía Panamá    — local tourism guide
+├── KMediaFilms          — film production studio      [active]
+├── En la Galería de Ana — event photography           [active]
+└── DRIVIP               — luxury ground transport     [active]
+    ... future products added via Product Registry
 ```
+
+New products are onboarded via `brands/<slug>/brand-config.json` and a Supabase INSERT. No code changes required. See `docs/product-onboarding-model.md`.
 
 ## Operational Layers
 

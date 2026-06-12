@@ -1,6 +1,9 @@
--- WEDO Meta OS — Brand Seed Data
--- Seeds the 5 active brands. IDs confirmed from Meta discovery (PR #5).
+-- WEDO Meta OS — Product Registry Seed
+-- Seeds the 3 active products. IDs confirmed from Meta discovery (PR #5).
 -- Do NOT commit real tokens. Page IDs are public identifiers, not secrets.
+--
+-- To add a new product: insert a new row with activation_status = 'draft',
+-- then update Meta IDs once confirmed. No code changes required.
 
 INSERT INTO brands (brand_id, brand_name, business_unit, active_status,
   facebook_page_id, instagram_business_id, meta_ad_account_id,
@@ -13,7 +16,7 @@ VALUES
     TRUE,
     '1009115316143644',
     '17841400348662832',
-    '',                         -- no confirmed ad account for KMedia
+    '',                         -- no confirmed ad account
     'es',
     'America/Panama'
   ),
@@ -36,28 +39,6 @@ VALUES
     '1158307954030806',
     '17841447217470964',
     'act_1861455161486718',
-    'es',
-    'America/Panama'
-  ),
-  (
-    'jardinero-davis',
-    'Jardinero Davis',
-    'Jardinería y paisajismo',
-    TRUE,
-    NULL,
-    NULL,
-    NULL,
-    'es',
-    'America/Panama'
-  ),
-  (
-    'fc-guia-panama',
-    'FC Guía Panamá',
-    'Turismo y guías locales',
-    TRUE,
-    NULL,
-    NULL,
-    NULL,
     'es',
     'America/Panama'
   )

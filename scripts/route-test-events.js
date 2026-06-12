@@ -1,101 +1,85 @@
 /**
  * route-test-events.js
- * Simula el routing de eventos sin enviar nada real.
- * Verifica que el brand_id se detecta correctamente.
+ * Simulates brand routing without sending anything real.
+ * Uses the Product Registry dynamically — no hardcoded product list.
  *
- * Uso: node scripts/route-test-events.js --event instagram_dm --page_id KMEDIA_FACEBOOK_PAGE_ID
+ * Usage:
+ *   node scripts/route-test-events.js                    # self-test mode
+ *   node scripts/route-test-events.js --ig_id <ID>       # single event
+ *   node scripts/route-test-events.js --page_id <ID>     # single event
  */
 
-const args = process.argv.slice(2);
+const { routeEvent, loadProducts } = require('../lib/product-registry')
 
-// Mapa de IDs a brand_id (usa vars de entorno o placeholders para pruebas)
-const BRAND_MAP = {
-  page_ids: {
-    [process.env.KMEDIA_FACEBOOK_PAGE_ID || '1009115316143644']: 'kmediafilms',
-    [process.env.ANA_FACEBOOK_PAGE_ID || '1043326452200695']: 'ana',
-    [process.env.DRIVIP_FACEBOOK_PAGE_ID || '1158307954030806']: 'drivip',
-    [process.env.JARDINERO_DAVIS_FACEBOOK_PAGE_ID || 'PLACEHOLDER_JARDINERO_DAVIS_FACEBOOK_PAGE_ID']: 'jardinero-davis',
-    [process.env.FC_GUIA_PANAMA_FACEBOOK_PAGE_ID || 'PLACEHOLDER_FC_GUIA_PANAMA_FACEBOOK_PAGE_ID']: 'fc-guia-panama',
-  },
-  ig_ids: {
-    [process.env.KMEDIA_IG_BUSINESS_ID || '17841400348662832']: 'kmediafilms',
-    [process.env.ANA_IG_BUSINESS_ID || '17841450875047591']: 'ana',
-    [process.env.DRIVIP_IG_BUSINESS_ID || '17841447217470964']: 'drivip',
-    [process.env.JARDINERO_DAVIS_IG_BUSINESS_ID || 'PLACEHOLDER_JARDINERO_DAVIS_IG_BUSINESS_ID']: 'jardinero-davis',
-    [process.env.FC_GUIA_PANAMA_IG_BUSINESS_ID || 'PLACEHOLDER_FC_GUIA_PANAMA_IG_BUSINESS_ID']: 'fc-guia-panama',
-  },
-  phone_ids: {
-    [process.env.ANA_PHONE_NUMBER_ID || 'PLACEHOLDER_ANA_PHONE_NUMBER_ID']: 'ana',
-    [process.env.DRIVIP_PHONE_NUMBER_ID || 'PLACEHOLDER_DRIVIP_PHONE_NUMBER_ID']: 'drivip',
-    [process.env.JARDINERO_DAVIS_PHONE_NUMBER_ID || 'PLACEHOLDER_JARDINERO_DAVIS_PHONE_NUMBER_ID']: 'jardinero-davis',
-    [process.env.FC_GUIA_PANAMA_PHONE_NUMBER_ID || 'PLACEHOLDER_FC_GUIA_PANAMA_PHONE_NUMBER_ID']: 'fc-guia-panama',
-  }
-};
-
-function detectBrand(eventData) {
-  const { page_id, ig_id, phone_id, waba_id } = eventData;
-
-  if (page_id && BRAND_MAP.page_ids[page_id]) {
-    return { brand_id: BRAND_MAP.page_ids[page_id], method: 'page_id_match' };
-  }
-  if (ig_id && BRAND_MAP.ig_ids[ig_id]) {
-    return { brand_id: BRAND_MAP.ig_ids[ig_id], method: 'ig_id_match' };
-  }
-  if (phone_id && BRAND_MAP.phone_ids[phone_id]) {
-    return { brand_id: BRAND_MAP.phone_ids[phone_id], method: 'phone_id_match' };
-  }
-
-  return { brand_id: 'unidentified', method: 'no_match', action: 'escalate_to_human' };
-}
-
-// Self-test cases — run when no args provided
-const SELF_TESTS = [
-  { label: 'KMediaFilms via ig_id',  input: { ig_id: '17841400348662832' },          expected: 'kmediafilms' },
-  { label: 'Ana via ig_id',          input: { ig_id: '17841450875047591' },          expected: 'ana' },
-  { label: 'DRIVIP via ig_id',       input: { ig_id: '17841447217470964' },          expected: 'drivip' },
-  { label: 'Ana via page_id',        input: { page_id: '1043326452200695' },         expected: 'ana' },
-  { label: 'DRIVIP via page_id',     input: { page_id: '1158307954030806' },         expected: 'drivip' },
-  { label: 'KMedia via page_id',     input: { page_id: '1009115316143644' },         expected: 'kmediafilms' },
-  { label: 'Unknown (escalate)',      input: { ig_id: 'unknown_id_999' },             expected: 'unidentified' },
-];
+const args = process.argv.slice(2)
 
 if (args.length === 0) {
-  console.log('\n=== ROUTE SELF-TEST ===');
-  let passed = 0;
-  let failed = 0;
+  // Self-test: build cases from the live registry + an unknown case
+  const products = loadProducts()
+  const testCases = []
 
-  for (const test of SELF_TESTS) {
-    const result = detectBrand(test.input);
-    const ok = result.brand_id === test.expected;
-    console.log(`  ${ok ? '✅' : '✗'} ${test.label}: ${result.brand_id} (expected: ${test.expected})`);
-    ok ? passed++ : failed++;
+  for (const p of products) {
+    const status = p.activation_status ?? (p.active_status === true ? 'active' : 'draft')
+    if (status === 'archived') continue
+
+    if (p.instagram_business_id && !p.instagram_business_id.startsWith('PLACEHOLDER')) {
+      testCases.push({ label: `${p.brand_name} via ig_id`, input: { ig_id: p.instagram_business_id }, expected: p.brand_id })
+    }
+    if (p.facebook_page_id && !p.facebook_page_id.startsWith('PLACEHOLDER')) {
+      testCases.push({ label: `${p.brand_name} via page_id`, input: { page_id: p.facebook_page_id }, expected: p.brand_id })
+    }
+    if (p.meta_ad_account_id && !p.meta_ad_account_id.startsWith('PLACEHOLDER') && p.meta_ad_account_id !== '') {
+      testCases.push({ label: `${p.brand_name} via ad_account`, input: { ad_account_id: p.meta_ad_account_id }, expected: p.brand_id })
+    }
   }
 
-  console.log(`\nResults: ${passed} passed, ${failed} failed`);
-  if (failed > 0) { process.exit(1); }
-  console.log('PASS: all brand routing tests passed.');
-  process.exit(0);
+  // Unknown product must always escalate
+  testCases.push({ label: 'Unknown product (escalate to human)', input: { ig_id: 'unknown_ig_id_000' }, expected: 'unidentified' })
+  // Missing IDs must escalate
+  testCases.push({ label: 'Missing IDs (escalate to human)', input: {}, expected: 'unidentified' })
+  // Future product fixture (demonstrates adding without code change)
+  const fixturePath = require('path').join(__dirname, '..', 'tests', 'fixtures', 'products', 'new-product-example.json')
+  if (require('fs').existsSync(fixturePath)) {
+    const fixture = JSON.parse(require('fs').readFileSync(fixturePath, 'utf8'))
+    testCases.push({ label: `Future product fixture (should be unidentified — not in registry)`, input: { ig_id: fixture.instagram_business_id }, expected: 'unidentified' })
+  }
+
+  console.log('\n=== ROUTE SELF-TEST ===')
+  console.log(`Products in registry: ${products.length}`)
+  let passed = 0; let failed = 0
+
+  for (const test of testCases) {
+    const result = routeEvent(test.input)
+    const ok = result.brand_id === test.expected
+    console.log(`  ${ok ? '✅' : '✗'} ${test.label}: ${result.brand_id} (expected: ${test.expected})`)
+    ok ? passed++ : failed++
+  }
+
+  console.log(`\nResults: ${passed} passed, ${failed} failed`)
+  if (failed > 0) { process.exit(1) }
+  console.log('PASS: all brand routing tests passed.')
+  process.exit(0)
 }
 
-// Parsear args (single-event mode)
-const eventData = {};
+// Single-event mode
+const eventData = {}
 for (let i = 0; i < args.length; i++) {
   if (args[i].startsWith('--')) {
-    eventData[args[i].slice(2)] = args[i + 1];
-    i++;
+    eventData[args[i].slice(2)] = args[i + 1]
+    i++
   }
 }
 
-console.log('\n=== ROUTE TEST ===');
-console.log('Input:', eventData);
+console.log('\n=== ROUTE TEST ===')
+console.log('Input:', eventData)
 
-const result = detectBrand(eventData);
-console.log('Resultado:', result);
+const result = routeEvent(eventData)
+console.log('Resultado:', result)
 
 if (result.brand_id === 'unidentified') {
-  console.log('⚠️  ALERTA: No se pudo identificar la marca. El evento requiere revisión humana.');
-  process.exit(1);
+  console.log('⚠️  ALERTA: No se pudo identificar el producto. El evento requiere revisión humana.')
+  process.exit(1)
 } else {
-  console.log(`✅ Marca detectada: ${result.brand_id} (método: ${result.method})`);
-  process.exit(0);
+  console.log(`✅ Producto detectado: ${result.brand_id} (método: ${result.method})`)
+  process.exit(0)
 }

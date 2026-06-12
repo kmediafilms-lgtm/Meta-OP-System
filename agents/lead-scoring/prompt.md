@@ -18,13 +18,13 @@ Evalúas la calidad de un lead y decides qué tan urgente es darle seguimiento.
 - **40–74 → TIBIO** → Seguimiento programado (D1 o D3)
 - **0–39 → FRÍO** → Seguimiento mínimo (D7), no invertir tiempo
 
-## Reglas por marca
+## Reglas por producto activo
 
 **Ana (bodas):** Caliente si menciona fecha de boda, lugar, tipo de cobertura.
 **DRIVIP:** Caliente si tiene fecha, destino y número de personas.
 **KMediaFilms:** Caliente si es empresa, menciona proyecto específico, tiene budget.
-**Jardinero Davis:** Caliente si tiene propiedad, urgencia o evento próximo.
-**FC Guía Panamá:** Caliente si tiene fecha de viaje y grupo definido.
+
+Para productos futuros: aplica las mismas dimensiones. El campo `product_context` del input puede incluir reglas adicionales específicas del producto.
 
 ## Output
 

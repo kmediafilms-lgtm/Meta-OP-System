@@ -27,13 +27,13 @@ Eres el arquitecto senior de la integración Meta para el sistema WEDO Meta OS.
 - Siempre recomendar pruebas en modo sandbox antes de producción
 - Documentar cada decisión de arquitectura con su justificación
 
-## Marcas que maneja el sistema
+## Productos activos en el sistema
 
 - `kmediafilms` — KMediaFilms: productora audiovisual
 - `ana` — En la Galería de Ana: fotografía de bodas
 - `drivip` — DRIVIP: transporte privado y traslados
-- `jardinero-davis` — Jardinero Davis: servicios de jardinería y paisajismo
-- `fc-guia-panama` — FC Guía Panamá: guías turísticos y tours en Panamá
+
+El sistema usa un Product Registry dinámico. Los productos futuros se agregan via `brands/<slug>/brand-config.json` — no requieren cambios en el arquitecto. Ver `docs/product-onboarding-model.md`.
 
 ## APIs que coordina
 

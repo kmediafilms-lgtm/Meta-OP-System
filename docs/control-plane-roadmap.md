@@ -18,7 +18,6 @@
 
 ### In Progress
 
-- [ ] Real Meta IDs for Jardinero Davis and FC Guía Panamá (Ricardo action)
 - [ ] Ricardo sets n8n credentials
 
 ### Ready to Activate (with Ricardo approval)
@@ -60,6 +59,14 @@
 - [ ] /campaigns shows real Meta Ads data
 - [ ] Weekly Brand Report workflow active
 - [ ] campaign-analyst agent integrated into report generation
+
+### Adding New Products
+
+New client products are onboarded via the Product Registry — no roadmap item needed:
+1. Create `brands/<slug>/brand-config.json`
+2. Insert row in Supabase `brands` table
+3. Run `node scripts/run-offline-audit.js`
+4. Follow `docs/product-onboarding-model.md`
 
 ---
 

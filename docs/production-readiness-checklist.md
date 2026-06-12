@@ -16,13 +16,13 @@ node scripts/route-test-events.js            # All brands route correctly
 
 Expected: all exit 0.
 
-## Brand Configs
+## Product Configs (3 active products)
 
 - [ ] `kmediafilms` — real Meta IDs confirmed (fb, ig) ✓
 - [ ] `ana` — real Meta IDs confirmed (fb, ig, ads) ✓
 - [ ] `drivip` — real Meta IDs confirmed (fb, ig, ads) ✓
-- [ ] `jardinero-davis` — placeholder IDs (need real IDs from Ricardo)
-- [ ] `fc-guia-panama` — placeholder IDs (need real IDs from Ricardo)
+
+Future products are added via the Product Registry onboarding flow. See `docs/product-onboarding-model.md`.
 
 ## Agent Contracts
 
