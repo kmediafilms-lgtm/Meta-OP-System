@@ -1,80 +1,58 @@
 # Codex Offline Audit Report - PR #6
 
 Date: 2026-06-12
-Scope: WEDO Meta OS Control Plane v1 (`feature/wedo-control-plane-v1`)
-Mode: Offline repo audit only. No n8n, Supabase, Vercel, Meta Graph, tokens, `.env`, merge, messages, campaigns, or production webhooks were used.
+PR: #6 - `feat: WEDO Meta OS Control Plane v1`
+Branch: `feature/wedo-control-plane-v1`
+Mode: offline repo audit only. No n8n, Supabase, Vercel, Meta Graph, tokens, `.env`, merge, real messages, campaign changes, or production webhooks were used.
 
-## Executive Summary
+## Result
 
-Overall result: **FAIL - PR #6 remains blocked**
+Overall: **FAIL**
 
-The Control Plane has a useful dynamic Product Registry foundation and the local validators pass, but PR #6 is not clean enough to unblock because it still contains operational documentation that treats non-current products as part of the active/pending system, still references a 5-brand scope, and does not explicitly prove workflow exports are inactive.
+Merge decision: **PR #6 remains blocked**
 
-Current real products found in code/config are only:
-
-- `kmediafilms` - KMediaFilms
-- `ana` - En la Galeria de Ana
-- `drivip` - DRIVIP
-
-No `brands/jardinero-davis` or `brands/fc-guia-panama` product directories were found. They also do not appear in dashboard mock cards or Supabase seeds. However, they do appear in an operational activation report and should be removed or rewritten as historical context before PR #6 is considered unblocked.
-
-## PASS/FAIL
-
-| Area | Result | Notes |
-| --- | --- | --- |
-| Current Product Registry limited to KMedia, Ana, DRIVIP | **PASS** | `brands/` contains only 3 product configs. |
-| Supabase seed limited to KMedia, Ana, DRIVIP | **PASS** | `scripts/validate-supabase-schema.js` reports seed brands: `kmediafilms`, `ana`, `drivip`. |
-| Dashboard product cards limited to KMedia, Ana, DRIVIP | **PASS** | `apps/dashboard/lib/mock-data.ts` has only the 3 current products. |
-| Future product support | **WARN** | `tests/fixtures/products/new-product-example.json` exists and routing escalates it, but registry status gating is weaker than documented. |
-| Removed products absent as real products | **FAIL** | `jardinero-davis` and `fc-guia-panama` still appear in `docs/n8n-activation-results.md` as pending/current activation rows. |
-| "5 brands" scope removed | **FAIL** | Multiple docs still say "5 brands" or "all 5 brands". |
-| Browser automation/scraping for Meta | **PASS** | No Puppeteer, Playwright, Selenium, Chromium, browserless, `page.goto`, `page.click`, or automation code found. |
-| Meta Business URLs | **WARN** | `business.facebook.com` appears only in manual setup docs, not automation code. |
-| Ads read-only by default | **PASS** | Campaign Analyst contract has `do_not_execute: const true`; dashboard labels Campaigns as READ ONLY. |
-| Campaign mutations require human approval | **PASS** | Campaign changes are represented as approvals; agent contracts/tests block direct execution. |
-| WhatsApp active | **WARN/FAIL** | WhatsApp workflows and send nodes exist, and workflow JSON does not include explicit `active: false`. |
-| Real messages | **WARN/FAIL** | Send-message nodes exist in workflow JSON; local mocks say no sends, but exports are not explicitly inactive. |
-| Productive webhooks active | **WARN/FAIL** | Webhook workflow exports have `active=undefined`; require explicit inactive/dry-run marker before activation. |
-| Secrets/tokens | **PASS** | `scripts/check-no-secrets.js` passed. |
+Reason: the core local checks pass and the current product tree is limited to the 3 real products, but PR #6 still contains operational docs that describe a 5-brand scope and does not explicitly mark workflow exports as inactive while webhook, WhatsApp, and send-message nodes exist.
 
 ## Commands Run
 
 ```bash
-node scripts/validate-brand-configs.js
-node scripts/route-test-events.js
-node scripts/validate-agent-contracts.js
-node scripts/validate-supabase-schema.js
-node scripts/check-no-secrets.js
+node scripts/run-offline-audit.js
 node scripts/check-no-dangerous-actions.js
-node scripts/mock-control-plane-run.js
+node scripts/check-no-secrets.js
+node scripts/validate-agent-contracts.js
 ```
 
-All commands above exited successfully.
+Results:
 
-Notable validator output:
+| Command | Result | Notes |
+| --- | --- | --- |
+| `node scripts/run-offline-audit.js` | **PASS** | Brand configs, route tests, webhook payload listing, no-secrets, and dangerous-action scan passed. |
+| `node scripts/check-no-dangerous-actions.js` | **PASS** | No unsafe dangerous actions detected by the repo scanner. |
+| `node scripts/check-no-secrets.js` | **PASS** | No obvious secrets/tokens found. No `.env` files found. |
+| `node scripts/validate-agent-contracts.js` | **WARN** | Exited 0, but reported 4 warnings for missing suggested blocked actions. |
 
-- Product configs: 3 products validated.
-- Routing tests: 11 passed, 0 failed.
-- Route coverage includes DRIVIP, Ana, KMedia, unknown escalation, missing IDs escalation, and a future product fixture that stays unidentified.
-- Agent contract validation passed with warnings about missing blocked actions in some agents.
-- Supabase schema validation passed with 11 tables, brand_id constraints, RLS enabled, and 3 seed brands.
-- Secret scan passed.
-- Dangerous-action scan passed.
-- Mock control-plane run sent zero real messages, made zero API calls, and required human approval for actions.
+Agent-contract warnings:
 
-## Removed Product References Found
+- `brand-router`: consider adding `send_whatsapp`.
+- `lead-scoring`: consider adding `send_whatsapp`.
+- `copy-conversion`: consider adding `send_whatsapp` and `call_meta_api`.
 
-These references should be removed or rewritten so they do not present Jardinero Davis or FC Guia Panama as real current products, seeds, tests, readiness requirements, dashboard cards, or activation requirements.
+## Product Scope
 
-| File | Line | Finding |
-| --- | ---: | --- |
-| `docs/n8n-activation-results.md` | 72 | `jardinero-davis` listed with test results. |
-| `docs/n8n-activation-results.md` | 73 | `fc-guia-panama` listed with test results. |
-| `docs/n8n-activation-results.md` | 106 | `jardinero-davis` listed with placeholder Meta IDs pending. |
-| `docs/n8n-activation-results.md` | 107 | `fc-guia-panama` listed with placeholder Meta IDs pending. |
-| `docs/n8n-activation-results.md` | 168 | "Conectar Jardinero Davis o FC Guia Panama" listed as a blocked action. |
+Status: **WARN/FAIL**
 
-Additional wrong-scope references:
+Good findings:
+
+- Current `HEAD` contains only these product config directories:
+  - `brands/kmediafilms`
+  - `brands/en-la-galeria-de-ana`
+  - `brands/drivip`
+- `git diff --name-status origin/main...HEAD` shows `brands/jardinero-davis/*` and `brands/fc-guia-panama/*` as **deleted**, not active.
+- `supabase/seed/001_brands.sql` seeds only `kmediafilms`, `ana`, and `drivip`.
+- `apps/dashboard/lib/mock-data.ts` has only KMediaFilms, En la Galeria de Ana, and DRIVIP in `BRANDS`.
+- Historical references to removed products were moved to `docs/archive/n8n-activation-results.md`, with an explicit note that they are not active products.
+
+Blocking findings:
 
 | File | Line | Finding |
 | --- | ---: | --- |
@@ -83,140 +61,96 @@ Additional wrong-scope references:
 | `docs/production-readiness-checklist.md` | 54 | Says seed `001_brands.sql` applied with 5 brands. |
 | `docs/n8n-safe-activation-plan.md` | 39 | Says verify all 5 brands route correctly. |
 
-## Product Registry Audit
+Historical references reviewed:
 
-Result: **WARN - dynamic foundation exists, but lifecycle enforcement is incomplete**
+| File | Lines | Finding |
+| --- | ---: | --- |
+| `docs/archive/n8n-activation-results.md` | 4, 85-86, 119-120, 181 | Contains Jardinero/FC references, but the file is archived and explicitly says they are not active products. |
+
+Conclusion: **not clean enough**. The code tree removes the non-current products, but PR #6 still presents a 5-brand scope in active operational docs.
+
+## Product Registry
+
+Status: **WARN**
 
 Good findings:
 
-- `lib/product-registry.js` dynamically loads product configs from `brands/*/brand-config.json`.
-- Adding future products can be done by adding a new product config directory.
-- `schemas/product.schema.json` defines `active_status`, `activation_status`, and `routing_rules`.
-- The product schema makes `facebook_page_id` and `instagram_business_id` required for `active` or `testing`.
-- `tests/fixtures/products/new-product-example.json` represents a future draft product.
-- Routing tests confirm future/draft product fixture does not route as a current product.
+- `lib/product-registry.js` reads dynamically from `brands/<slug>/brand-config.json`.
+- No rigid product-name `if/else` or `switch` was found in `lib/product-registry.js`.
+- `tests/fixtures/products/new-product-example.json` documents a future product entering through config/fixture.
+- `schemas/product.schema.json` defines `active_status`, `activation_status`, `routing_rules`, and conditional Meta ID requirements.
+- `scripts/validate-brand-configs.js` validates all directories under `brands/` automatically.
+- `node scripts/route-test-events.js` covers KMedia, Ana, DRIVIP, unknown escalation, missing IDs, and a future fixture.
 
 Risks:
 
-- Current `brand-config.json` files do not include `activation_status`; the validator and registry infer `active` from `active_status: true`.
-- `lib/product-registry.js` comments say routing includes only active/testing products, but implementation skips only `archived`, so a `draft` product with IDs could route.
-- `meta_ad_account_id` is required by `scripts/validate-brand-configs.js` for active/testing but is not required by `schemas/product.schema.json`; this mismatch should be intentional and documented or aligned.
-- Some discovery/mapping logic is current-product-specific. That is acceptable for current Meta mapping, but future product onboarding should depend on registry data wherever possible.
+- Current `brand-config.json` files do not explicitly include `activation_status`; validator/router infer `active` from `active_status: true`.
+- `lib/product-registry.js` documents "Only includes products that are active or testing", but implementation only skips `archived`. A `draft` product with real-looking IDs could route.
+- `scripts/route-test-events.js` duplicates the same status behavior, so tests may not catch that lifecycle bug.
+- `schemas/product.schema.json` requires `facebook_page_id` and `instagram_business_id` for `testing`/`active`; `scripts/validate-brand-configs.js` also requires `meta_ad_account_id` for those statuses. That mismatch should be aligned or documented.
 
-Recommended fixes:
+Required before unblock:
 
-- Add explicit `activation_status` to all current `brand-config.json` files.
-- Change `buildRoutingMap()` to route only `activation_status` in `active` or `testing`.
-- Keep future/draft products out of routing even if placeholder or accidental IDs are present.
-- Align schema and validator behavior for `meta_ad_account_id`, especially if active products may not always have an Ads account.
+- Add explicit `activation_status` to the 3 current brand configs.
+- Change routing to include only `activation_status in ["testing", "active"]`.
+- Add a negative test proving a draft product with IDs does not route.
 
-## Meta Browser Automation / Scraping Audit
+## Meta Safety
 
-Result: **PASS with documentation/script warning**
-
-No code usage was found for:
-
-- `puppeteer`
-- `playwright`
-- `selenium`
-- `chromium`
-- `browserless`
-- `navigator.webdriver`
-- `page.click`
-- `page.goto`
-- `adsmanager.facebook.com`
+Status: **PASS with docs-only warnings**
 
 Good findings:
 
-- `docs/meta-automation-safety-policy.md` explicitly prohibits browser automation, scraping, Meta UI scraping, automated clicks, `navigator.webdriver`, and calls to `business.facebook.com` / `adsmanager.facebook.com`.
-- `scripts/check-no-dangerous-actions.js` includes detector patterns for Puppeteer, Playwright, Selenium, Chromium, browserless, webdriver, browser clicks/navigation, Meta Business URLs, and scraping terms.
-- Agent contracts now include browser automation / scraping / campaign mutation / WhatsApp unsafe-send blocked actions in most agents.
+- No implementation code found for Puppeteer, Playwright, Selenium, Chromium, browserless, `navigator.webdriver`, `page.click`, or `page.goto`.
+- No Meta browser automation implementation found.
+- `scripts/check-no-dangerous-actions.js` scans for browser automation, scraping, Meta UI URLs, message sends, and campaign mutations.
+- `docs/meta-automation-safety-policy.md` explicitly prohibits browser automation, scraping, Meta UI scraping, automated clicks, `business.facebook.com`, and `adsmanager.facebook.com` automation.
+- Ads reads are documented as GET/read-only.
+- `agents/campaign-analyst/contract.json` has `do_not_execute: const true`.
+- `agents/campaign-analyst/prompt.md` says READ ONLY and forbids POST/PUT/PATCH/DELETE.
+- `apps/dashboard/app/campaigns/page.tsx` says READ ONLY and requires human approval.
+- `agents/human-approval/tests.json` covers campaign changes requiring human approval.
 
-The following findings are acceptable because they are docs-only prohibition or manual setup references:
+Allowed docs-only hits:
 
-- `scripts/check-no-dangerous-actions.js:18-37` contains the banned terms as scanner patterns, not implementation.
-- `docs/meta-asset-discovery.md:163` prohibits browser automation/scraping.
-- `docs/ban-prevention-rules.md:12` prohibits scraping.
-- `docs/control-plane-roadmap.md:89` says competitor scraping is never allowed.
-- `docs/meta-asset-discovery-runbook.md:152` prohibits scraping/browser usage for asset discovery.
-- `docs/meta-automation-safety-policy.md:10-118` defines the explicit prohibition policy.
-- `docs/meta-setup-checklist.md:12`, `:33`, `:41` mention `business.facebook.com` as manual setup steps, not automation.
+- `docs/meta-setup-checklist.md` mentions `business.facebook.com` as manual setup, not automation.
+- Policy/docs mention scraping and browser automation in prohibition text.
+- `scripts/check-no-dangerous-actions.js` contains banned terms as scanner patterns.
 
-Recommendation: keep manual `business.facebook.com` references only in human setup docs and explicitly state they are manual, not automated.
+## Prohibitions
 
-## Safety Audit
+Status: **FAIL**
 
-Result: **WARN/FAIL until workflow exports are explicitly inactive**
+| Requirement | Result | Evidence |
+| --- | --- | --- |
+| No WhatsApp active | **FAIL/WARN** | Workflow JSON exports have `active=undefined`; WhatsApp nodes exist in `workflows/whatsapp-inbound.json`, `workflows/human-approval.json`, `workflows/weekly-report.json`, `workflows/campaign-reporting.json`, `workflows/meta-webhook-router.json`, and `workflows/brand-onboarding.json`. |
+| No real messages | **FAIL/WARN** | Send nodes exist in workflow templates; they may be intended as inactive, but exports do not prove `active: false` or disabled/no-send mode. |
+| No production webhooks | **FAIL/WARN** | `workflows/meta-webhook-router.json` has a webhook node and `active=undefined`. |
+| No secrets | **PASS** | `node scripts/check-no-secrets.js` passed and no `.env` files were found. |
+| No tokens | **PASS** | Secret scanner passed; no token-like secrets detected. |
 
-Good findings:
+Specific workflow audit:
 
-- `agents/campaign-analyst/contract.json` blocks campaign mutations and requires `do_not_execute`.
-- `agents/human-approval/tests.json` covers campaign change approval.
-- `apps/dashboard/app/campaigns/page.tsx` labels campaign analytics as read-only and human-approval required.
-- `scripts/mock-control-plane-run.js` reports zero real messages, zero API calls, and human approval for actions.
-- `scripts/check-no-dangerous-actions.js` passes.
+- All workflow JSON files currently report `active=undefined`.
+- `workflows/whatsapp-inbound.json` includes `n8n-nodes-base.whatsAppTrigger` and WhatsApp send nodes.
+- `workflows/meta-webhook-router.json` includes a webhook node and WhatsApp alert node.
+- `workflows/instagram-inbound.json` includes `Send Instagram Reply`.
+- `workflows/weekly-report.json`, `workflows/human-approval.json`, and `workflows/campaign-reporting.json` include WhatsApp send/report nodes.
 
-Blocking risks:
+Required before unblock:
 
-- Workflow JSON exports have `active=undefined` instead of explicit `active: false`.
-- `workflows/meta-webhook-router.json` contains a webhook node and WhatsApp alert node.
-- `workflows/whatsapp-inbound.json` contains WhatsApp trigger/send nodes.
-- `workflows/weekly-report.json`, `workflows/human-approval.json`, and `workflows/campaign-reporting.json` include WhatsApp send nodes.
-- These may be intended as templates, but PR #6 must make inactive/dry-run/no-send status explicit.
+- Add explicit `active: false` or equivalent disabled metadata to workflow exports.
+- Mark send nodes as disabled/template-only/dry-run until approved.
+- Ensure production webhook exports cannot be activated accidentally.
 
-Required fixes before unblock:
+## Final Decision
 
-- Add explicit inactive metadata to every workflow export if n8n JSON supports it, preferably `active: false`.
-- Mark WhatsApp workflows and send nodes as disabled/template-only until approved.
-- Ensure real-message nodes cannot execute without a human approval gate and production activation checklist.
-- Ensure production webhooks cannot be activated accidentally from exported JSON.
+PR #6 is **not unblocked for merge**.
 
-## Required Test Coverage
+It can move toward unblock after Claude Code fixes:
 
-| Required test | Result |
-| --- | --- |
-| KMedia routing | **PASS** via `node scripts/route-test-events.js` |
-| Ana routing | **PASS** via `node scripts/route-test-events.js` |
-| DRIVIP routing | **PASS** via `node scripts/route-test-events.js` |
-| Unknown product escalation | **PASS** via `node scripts/route-test-events.js` |
-| Future product fixture | **PASS** via `tests/fixtures/products/new-product-example.json` and route self-test |
-| No dangerous actions | **PASS** via `node scripts/check-no-dangerous-actions.js` |
-| No secrets | **PASS** via `node scripts/check-no-secrets.js` |
-| No WhatsApp active | **WARN/FAIL** because WhatsApp workflows exist and `active` is undefined |
-| No campaign mutation | **PASS** through agent contracts/tests and dashboard read-only copy |
-
-## Critical Risks
-
-- PR #6 still describes a 5-brand system in operational docs even though WEDO Meta OS currently has only 3 real products.
-- Removed products still appear as pending/current activation work in `docs/n8n-activation-results.md`.
-- Workflow exports are not explicitly inactive, while webhook and WhatsApp send nodes are present.
-- Product routing lifecycle is weaker than documented because draft products are not explicitly excluded by `buildRoutingMap()`.
-
-## Medium Risks
-
-- Current brand configs rely on inferred `activation_status` instead of explicit lifecycle state.
-- Product schema and brand-config validator disagree on whether `meta_ad_account_id` is required for active/testing products.
-- Manual Meta Business setup docs should clarify they are human-only and must never become browser automation.
-- Some agents passed with warnings for missing blocked action coverage.
-
-## Recommendations For Claude Code
-
-1. Remove Jardinero Davis and FC Guia Panama from PR #6 operational docs, seeds, tests, dashboards, readiness requirements, and activation plans.
-2. Replace every "5 brands" statement with "3 current products" plus a separate future-product registry statement.
-3. Add explicit `activation_status` to all current brand configs.
-4. Update `lib/product-registry.js` so only `active` and `testing` products route.
-5. Align `schemas/product.schema.json` and `scripts/validate-brand-configs.js` on Meta ID requirements.
-6. Add explicit `active: false` or equivalent disabled metadata to workflow JSON exports.
-7. Mark WhatsApp workflows as disabled/template-only until Meta App Review, credentials, and human approval are complete.
-8. Keep Meta asset discovery API-only; never add browser automation or scraping for Meta.
-
-## Unblock Decision
-
-Decision: **BLOCK PR #6**
-
-PR #6 should not advance until:
-
-- The repo and PR copy reflect only KMediaFilms, En la Galeria de Ana, and DRIVIP as current products.
-- Removed products appear nowhere as current or pending operational scope.
-- Dynamic Product Registry lifecycle enforcement is corrected.
-- Workflow exports are explicitly inactive and cannot accidentally send messages, touch WhatsApp, or activate production webhooks.
+1. Remove or rewrite all operational references to 5 brands and removed products.
+2. Add explicit product lifecycle state and enforce `testing`/`active` routing only.
+3. Add a draft-with-IDs negative routing test.
+4. Mark all workflow exports explicitly inactive.
+5. Disable or clearly template-gate WhatsApp/send/webhook nodes.
