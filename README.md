@@ -93,3 +93,41 @@ Ver: [`docs/meta-setup-checklist.md`](docs/meta-setup-checklist.md)
 Variables de entorno: copia `.env.example` a `.env` y completa con Ricardo.
 
 **Nunca versionar `.env` ni credenciales reales.**
+
+---
+
+## Meta Asset Discovery
+
+El módulo de discovery encuentra Pages, Instagram Business Accounts y Ad Accounts desde Meta Graph API en modo solo lectura.
+
+Variables necesarias:
+
+```bash
+META_ACCESS_TOKEN="TOKEN_REAL_DE_META"
+META_BUSINESS_ID="ID_DEL_BUSINESS_MANAGER_OPCIONAL"
+GRAPH_API_VERSION="v25.0"
+```
+
+Ejecutar discovery:
+
+```bash
+node scripts/meta-discover-assets.js > outputs/meta-assets.local.json
+```
+
+Validar output:
+
+```bash
+node scripts/validate-meta-assets-output.js outputs/meta-assets.local.json
+```
+
+No subas tokens ni IDs reales si no quieres que queden en GitHub. `outputs/meta-assets.local.json` debe quedarse local.
+
+Orden recomendado:
+
+1. Descubrir assets.
+2. Revisar el output manualmente.
+3. Actualizar `brand-config.json` manualmente.
+4. Probar el router con los IDs reales.
+
+Runbook completo: [`docs/meta-asset-discovery-runbook.md`](docs/meta-asset-discovery-runbook.md)
+Setup de Codex: [`docs/codex-setup-for-meta-discovery.md`](docs/codex-setup-for-meta-discovery.md)
