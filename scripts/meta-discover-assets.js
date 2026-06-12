@@ -53,7 +53,7 @@ function guessBrand(...values) {
     },
     {
       brand_id: 'en-la-galeria-de-ana',
-      patterns: ['galeria de ana', 'en la galeria de ana', 'galeria ana', 'ana']
+      patterns: ['galeria de ana', 'en la galeria de ana', 'galeria ana', 'galeriaana', 'ana bodas']
     },
     {
       brand_id: 'drivip',
@@ -69,6 +69,29 @@ function guessBrand(...values) {
   return 'needs_review';
 }
 
+function formatGraphError(error, context = {}) {
+  const graphError = error.payload?.error || {};
+  const code = graphError.code || null;
+  const subcode = graphError.error_subcode || null;
+  const message = graphError.message || error.message || 'Graph API request failed';
+
+  const hints = [];
+  if (code === 190) hints.push('Access token is invalid, expired, revoked, or malformed.');
+  if ([10, 200, 299].includes(code)) hints.push('Token is missing a permission or asset access is not granted.');
+  if (error.status === 403) hints.push('The token does not have access to this edge or asset.');
+  if (error.status === 404) hints.push('The Business/Page/Ad Account ID may be wrong or unavailable to this token.');
+
+  return {
+    edge: context.edge || '',
+    path: context.path || '',
+    status: error.status || null,
+    code,
+    subcode,
+    message,
+    hints
+  };
+}
+
 async function graphGet(path, params = {}) {
   const url = new URL(`${GRAPH_BASE}${path}`);
   Object.entries(params).forEach(([key, value]) => {
@@ -78,7 +101,10 @@ async function graphGet(path, params = {}) {
   });
   url.searchParams.set('access_token', ACCESS_TOKEN);
 
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { Accept: 'application/json' }
+  });
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
@@ -97,7 +123,10 @@ async function getAllPages(path, params = {}) {
   let next = first.paging?.next;
 
   while (next) {
-    const response = await fetch(next);
+    const response = await fetch(next, {
+      method: 'GET',
+      headers: { Accept: 'application/json' }
+    });
     const payload = await response.json().catch(() => ({}));
 
     if (!response.ok) {
@@ -114,15 +143,24 @@ async function getAllPages(path, params = {}) {
   return data;
 }
 
+async function getAllPagesWithErrors(path, params, context, errors) {
+  try {
+    return await getAllPages(path, params);
+  } catch (error) {
+    errors.push(formatGraphError(error, { ...context, path }));
+    return [];
+  }
+}
+
 async function discoverBusinesses() {
   const businesses = await getAllPages('/me/businesses', { fields: 'id,name' });
   return businesses;
 }
 
-async function discoverPages(businessId, edge, source) {
-  const pages = await getAllPages(`/${businessId}/${edge}`, {
+async function discoverPages(businessId, edge, source, errors) {
+  const pages = await getAllPagesWithErrors(`/${businessId}/${edge}`, {
     fields: 'id,name,username,link'
-  });
+  }, { edge: source }, errors);
 
   const enriched = [];
 
@@ -135,6 +173,10 @@ async function discoverPages(businessId, edge, source) {
       });
       instagramBusinessId = pageDetails.instagram_business_account?.id || '';
     } catch (error) {
+      errors.push(formatGraphError(error, {
+        edge: 'page_instagram_business_account',
+        path: `/${page.id}`
+      }));
       instagramBusinessId = '';
     }
 
@@ -152,10 +194,10 @@ async function discoverPages(businessId, edge, source) {
   return enriched;
 }
 
-async function discoverAdAccounts(businessId, edge, source) {
-  const accounts = await getAllPages(`/${businessId}/${edge}`, {
+async function discoverAdAccounts(businessId, edge, source, errors) {
+  const accounts = await getAllPagesWithErrors(`/${businessId}/${edge}`, {
     fields: 'id,name,account_id,account_status,currency,timezone_name'
-  });
+  }, { edge: source }, errors);
 
   return accounts.map((account) => ({
     ad_account_id: account.id || (account.account_id ? `act_${account.account_id}` : ''),
@@ -193,6 +235,7 @@ function buildBrandSuggestions(pages, adAccounts) {
 }
 
 async function main() {
+  const graph_errors = [];
   const businesses = await discoverBusinesses();
 
   if (!businesses.length && !BUSINESS_ID) {
@@ -204,16 +247,21 @@ async function main() {
     : businesses[0];
 
   const [ownedPages, clientPages, ownedAdAccounts, clientAdAccounts] = await Promise.all([
-    discoverPages(selectedBusiness.id, 'owned_pages', 'owned_pages').catch(() => []),
-    discoverPages(selectedBusiness.id, 'client_pages', 'client_pages').catch(() => []),
-    discoverAdAccounts(selectedBusiness.id, 'owned_ad_accounts', 'owned_ad_accounts').catch(() => []),
-    discoverAdAccounts(selectedBusiness.id, 'client_ad_accounts', 'client_ad_accounts').catch(() => [])
+    discoverPages(selectedBusiness.id, 'owned_pages', 'owned_pages', graph_errors),
+    discoverPages(selectedBusiness.id, 'client_pages', 'client_pages', graph_errors),
+    discoverAdAccounts(selectedBusiness.id, 'owned_ad_accounts', 'owned_ad_accounts', graph_errors),
+    discoverAdAccounts(selectedBusiness.id, 'client_ad_accounts', 'client_ad_accounts', graph_errors)
   ]);
 
   const pages = [...ownedPages, ...clientPages];
   const adAccounts = [...ownedAdAccounts, ...clientAdAccounts];
 
   const output = {
+    run_metadata: {
+      generated_at: new Date().toISOString(),
+      graph_api_version: GRAPH_API_VERSION,
+      mode: 'read_only'
+    },
     business: {
       id: selectedBusiness.id,
       name: selectedBusiness.name || ''
@@ -225,11 +273,12 @@ async function main() {
     pages,
     ad_accounts: adAccounts,
     brand_config_suggestions: buildBrandSuggestions(pages, adAccounts),
+    graph_errors,
     warnings: [
       'Review all matched_brand_guess values manually before copying into brand-config.json.',
       'This script is read-only and does not validate production permissions or App Review status.',
       'If Instagram Business ID is empty, check whether the Instagram account is professional and connected to the correct Facebook Page.',
-      'If expected assets are missing, check Business Manager ownership, shared access, token permissions, and restrictions.'
+      'If expected assets are missing, check Business Manager ownership, shared access, token permissions, restrictions, and graph_errors.'
     ]
   };
 
@@ -240,7 +289,7 @@ main().catch((error) => {
   console.error(JSON.stringify({
     error: error.message,
     status: error.status || null,
-    graph_error: error.payload?.error || null
+    graph_error: formatGraphError(error, { edge: 'startup' })
   }, null, 2));
   process.exit(1);
 });
