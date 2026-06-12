@@ -91,7 +91,12 @@
   "blocked_actions": [
     "send_message",
     "modify_campaign",
-    "call_meta_api"
+    "call_meta_api",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
   ],
   "requires_human_rules": [
     "temperature === 'hot'",

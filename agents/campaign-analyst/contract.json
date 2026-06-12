@@ -96,7 +96,12 @@
     "modify_budget",
     "create_campaign",
     "delete_adset",
-    "modify_targeting"
+    "modify_targeting",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
   ],
   "requires_human_rules": [
     "any_campaign_change_recommended",

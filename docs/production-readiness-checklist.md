@@ -2,16 +2,32 @@
 
 Run this checklist before declaring any component production-ready.
 
+## Mandatory Safety Blocks
+
+These must be confirmed **before any other check**. If any block fails, stop immediately.
+
+- [ ] **No browser automation** — `grep -r "puppeteer\|playwright\|selenium\|page\.click\|page\.goto" scripts/ agents/ apps/ lib/` returns empty
+- [ ] **No scraping** — `grep -ri "scraping\|\.scrape(" scripts/ agents/ apps/ lib/` returns empty
+- [ ] **No campaign mutations** — no code path modifies campaign/adset/budget without human approval gate
+- [ ] **No WhatsApp sends** — no workflow sends WhatsApp messages (Phase C+ only, after Meta review)
+- [ ] **No productive webhooks active** — all n8n workflows are INACTIVE until Ricardo approves each phase
+- [ ] **Ads read-only first** — campaign-analyst agent confirmed as `do_not_execute: const true`
+- [ ] **`node scripts/check-no-dangerous-actions.js` exits 0**
+- [ ] **`node scripts/check-no-secrets.js` exits 0**
+
+> Reference: `docs/meta-automation-safety-policy.md`
+
 ## System Scripts
 
 ```bash
-node scripts/validate-brand-configs.js       # 5 brands, 0 errors
+node scripts/validate-brand-configs.js       # 3 products, 0 errors
 node scripts/validate-agent-contracts.js     # 8 agents, 0 errors
 node scripts/validate-supabase-schema.js     # 11 tables, all constraints
 node scripts/check-no-secrets.js             # 0 hardcoded tokens
-node scripts/check-no-dangerous-actions.js   # 0 unguarded dangerous actions
+node scripts/check-no-dangerous-actions.js   # 0 dangerous patterns
 node scripts/mock-control-plane-run.js       # 5/5 pass, all require human approval
-node scripts/route-test-events.js            # All brands route correctly
+node scripts/route-test-events.js            # All products route correctly
+node scripts/run-offline-audit.js            # Full suite, all exit 0
 ```
 
 Expected: all exit 0.

@@ -75,7 +75,12 @@
     "send_message",
     "send_reply",
     "post_comment",
-    "modify_campaign"
+    "modify_campaign",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
   ],
   "requires_human_rules": [
     "intent IN ['precio', 'cotizacion', 'reclamo', 'descuento', 'contrato_pago']",

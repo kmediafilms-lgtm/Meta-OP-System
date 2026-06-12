@@ -87,7 +87,12 @@
   "blocked_actions": [
     "execute_without_approval",
     "auto_approve",
-    "override_rejection"
+    "override_rejection",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
   ],
   "requires_human_rules": [
     "always — this agent only triggers when human approval is needed"

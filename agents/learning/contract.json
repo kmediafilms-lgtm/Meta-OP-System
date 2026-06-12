@@ -70,7 +70,12 @@
   "blocked_actions": [
     "modify_campaign",
     "send_message",
-    "auto_apply_learning"
+    "auto_apply_learning",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
   ],
   "requires_human_rules": [
     "confidence < 0.5 — human validation required before acting on note",
