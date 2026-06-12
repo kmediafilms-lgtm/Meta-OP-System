@@ -1,0 +1,9 @@
+{
+  "fixture_id": "sensitive-payment",
+  "brand_id": "ana",
+  "lead_id": "lead_payment_001",
+  "source": "instagram_dm",
+  "message": "Ya hice el pago, mándame el contrato y confirma la reserva.",
+  "expected_intent": "contrato_pago",
+  "expected_requires_human": true
+}

@@ -1,0 +1,9 @@
+{
+  "fixture_id": "hot-lead",
+  "brand_id": "ana",
+  "lead_id": "lead_hot_001",
+  "source": "instagram_dm",
+  "message": "Hola, mi boda es el 20 de julio y quiero reservar cobertura completa.",
+  "expected_classification": "hot",
+  "expected_requires_human": true
+}

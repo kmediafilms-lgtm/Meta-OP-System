@@ -1,0 +1,18 @@
+{
+  "fixture_id": "drivip-instagram-dm",
+  "expected_brand_id": "drivip",
+  "expected_action": "route",
+  "object": "instagram",
+  "entry": [
+    {
+      "id": "1158307954030806",
+      "messaging": [
+        {
+          "sender": { "id": "ig_user_drivip_001" },
+          "recipient": { "id": "17841447217470964" },
+          "message": { "mid": "m_drivip_001", "text": "Necesito traslado del aeropuerto al hotel." }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "fixture_id": "drivip-ad-account-event",
+  "expected_brand_id": "drivip",
+  "expected_action": "route",
+  "source": "meta_ads",
+  "ad_account_id": "act_1861455161486718",
+  "event_type": "campaign_insights_read",
+  "readonly": true
+}

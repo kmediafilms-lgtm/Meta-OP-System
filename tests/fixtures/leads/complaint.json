@@ -1,0 +1,9 @@
+{
+  "fixture_id": "complaint",
+  "brand_id": "drivip",
+  "lead_id": "lead_complaint_001",
+  "source": "whatsapp",
+  "message": "Estoy molesto, el conductor no llegó.",
+  "expected_intent": "reclamo",
+  "expected_requires_human": true
+}

@@ -1,0 +1,18 @@
+{
+  "fixture_id": "unknown-brand-event",
+  "expected_brand_id": null,
+  "expected_action": "escalate_to_human",
+  "object": "instagram",
+  "entry": [
+    {
+      "id": "999999999999999",
+      "messaging": [
+        {
+          "sender": { "id": "ig_user_unknown_001" },
+          "recipient": { "id": "17840000000000000" },
+          "message": { "mid": "m_unknown_001", "text": "info" }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "fixture_id": "ana-good-ctr-bad-leads",
+  "brand_id": "ana",
+  "ad_account_id": "act_2189268925168947",
+  "campaign_id": "cmp_ana_001",
+  "readonly": true,
+  "metrics": {
+    "ctr": 4.8,
+    "cpc": 0.23,
+    "leads": 60,
+    "qualified_leads": 3,
+    "reservations": 0
+  },
+  "expected_recommendation_mode": "analysis_only"
+}

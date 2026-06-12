@@ -1,0 +1,18 @@
+{
+  "fixture_id": "ana-instagram-dm",
+  "expected_brand_id": "ana",
+  "expected_action": "route",
+  "object": "instagram",
+  "entry": [
+    {
+      "id": "1043326452200695",
+      "messaging": [
+        {
+          "sender": { "id": "ig_user_ana_001" },
+          "recipient": { "id": "17841450875047591" },
+          "message": { "mid": "m_ana_001", "text": "Hola, quisiera info de paquetes de boda." }
+        }
+      ]
+    }
+  ]
+}

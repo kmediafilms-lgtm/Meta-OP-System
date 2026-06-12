@@ -1,0 +1,18 @@
+{
+  "fixture_id": "kmedia-instagram-dm",
+  "expected_brand_id": "kmediafilms",
+  "expected_action": "route",
+  "object": "instagram",
+  "entry": [
+    {
+      "id": "1009115316143644",
+      "messaging": [
+        {
+          "sender": { "id": "ig_user_kmedia_001" },
+          "recipient": { "id": "17841400348662832" },
+          "message": { "mid": "m_kmedia_001", "text": "Busco video corporativo para mi empresa." }
+        }
+      ]
+    }
+  ]
+}
