@@ -2,34 +2,61 @@
 
 Memoria operativa del sistema. Almacena marcas, contactos, conversaciones, mensajes, leads, campañas, aprobaciones, seguimientos, eventos y notas de aprendizaje.
 
-## Aplicar migraciones
+## Proyecto activo
 
-```bash
-# Usando Supabase CLI (requiere SUPABASE_ACCESS_TOKEN)
-supabase db push
-
-# O directamente desde SQL Editor en supabase.com
-# Ejecutar: supabase/migrations/001_initial_schema.sql
+```
+Project ID:  ndusmrxnaupypomfdnun
+URL:         https://ndusmrxnaupypomfdnun.supabase.co
+Región:      us-east-1
+Org:         Drivippa (rdorktgkxooapwxtusyc)
+Status:      ACTIVE_HEALTHY
 ```
 
-## Seed
+Migración `001_initial_schema` aplicada. Seed `001_brands.sql` aplicado (3 productos).
 
-```bash
-supabase db seed
-# O ejecutar: supabase/seed/001_brands.sql en el SQL Editor
+## Variables de entorno
+
+### No secretas — se pueden poner en Vercel (Public) y en el repo
+
 ```
+NEXT_PUBLIC_SUPABASE_URL=https://ndusmrxnaupypomfdnun.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Qbq2Ec1-Yp7EtSHnz4z20A_ZQzjvI-3
+```
+
+### Secretas — SOLO en n8n Settings → Variables y Vercel (Server-only). Nunca en el repo.
+
+```
+SUPABASE_URL=https://ndusmrxnaupypomfdnun.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<obtener desde supabase.com/dashboard/project/ndusmrxnaupypomfdnun/settings/api>
+```
+
+**Para obtener la service_role key:**
+1. Ir a https://supabase.com/dashboard/project/ndusmrxnaupypomfdnun/settings/api
+2. Sección "Project API keys"
+3. Copiar `service_role` (la que dice "secret")
+4. Pegar en n8n: Settings → Variables → Nueva variable `SUPABASE_SERVICE_ROLE_KEY`
+
+## Tablas — 11 tablas, RLS habilitado en todas
+
+| Tabla | Propósito |
+|-------|-----------|
+| `brands` | 3 productos registrados (KMediaFilms, Ana, DRIVIP) |
+| `contacts` | Contactos únicos por brand_id + canal |
+| `conversations` | Hilos de conversación por marca |
+| `messages` | Mensajes inbound/outbound con intent clasificado |
+| `leads` | Leads con score, temperatura y status |
+| `campaigns` | Campañas Meta sincronizadas (solo lectura) |
+| `campaign_metrics` | Métricas históricas por campaña |
+| `approvals` | Cola de aprobaciones humanas |
+| `followups` | Seguimientos programados D0/D1/D3/D7 |
+| `events_log` | Log inmutable de eventos entrantes de Meta |
+| `learning_notes` | Patrones detectados por el agente de aprendizaje |
 
 ## Reglas
 
 - `brand_id` obligatorio en todas las tablas operativas
 - No guardar tokens ni secretos en la base de datos
-- RLS habilitado en todas las tablas — ajustar políticas antes de producción
+- RLS habilitado en todas las tablas — ajustar políticas por brand_id antes de producción
 - El campo `meta_ad_account_id` puede estar vacío (KMediaFilms no tiene confirmado)
 
-## Credenciales necesarias
-
-- `SUPABASE_URL` — URL del proyecto Supabase
-- `SUPABASE_ANON_KEY` — para acceso desde dashboard (solo lectura pública)
-- `SUPABASE_SERVICE_ROLE_KEY` — para n8n y workflows (nunca en el repo)
-
-Ver `docs/supabase-schema.md` para descripción completa de tablas.
+Ver `docs/supabase-schema.md` para descripción completa de tablas y columnas.
