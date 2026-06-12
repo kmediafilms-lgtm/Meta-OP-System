@@ -1,6 +1,6 @@
 # SECURITY.md — Seguridad del Sistema
 
-**Meta Operating System WEDO — KMedia**
+**WEDO Meta OS**
 
 ---
 

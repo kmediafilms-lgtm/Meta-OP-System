@@ -1,0 +1,31 @@
+{
+  "brand_id": "jardinero-davis",
+  "brand_name": "Jardinero Davis",
+  "description": "Servicios de jardinería, paisajismo y mantenimiento de exteriores en Panamá.",
+  "active_status": "active",
+  "facebook_page_id": "JARDINERO_DAVIS_FACEBOOK_PAGE_ID",
+  "instagram_business_id": "JARDINERO_DAVIS_IG_BUSINESS_ID",
+  "meta_ad_account_id": "JARDINERO_DAVIS_AD_ACCOUNT_ID",
+  "whatsapp_business_account_id": "JARDINERO_DAVIS_WABA_ID",
+  "whatsapp_phone_number_id": "JARDINERO_DAVIS_PHONE_NUMBER_ID",
+  "channels": {
+    "instagram": true,
+    "facebook": true,
+    "whatsapp": true,
+    "ads": true
+  },
+  "escalation_channels": {
+    "primary": "whatsapp",
+    "contact": "JARDINERO_DAVIS_ESCALATION_NUMBER"
+  },
+  "auto_response_enabled": false,
+  "require_human_approval_for": [
+    "pricing",
+    "availability",
+    "project_quotes",
+    "contracts"
+  ],
+  "do_not_contact_list": [],
+  "timezone": "America/Panama",
+  "language": "es"
+}

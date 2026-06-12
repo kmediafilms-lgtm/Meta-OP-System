@@ -1,0 +1,31 @@
+{
+  "brand_id": "fc-guia-panama",
+  "brand_name": "FC Guía Panamá",
+  "description": "Guías turísticos, tours y experiencias auténticas en Panamá.",
+  "active_status": "active",
+  "facebook_page_id": "FC_GUIA_PANAMA_FACEBOOK_PAGE_ID",
+  "instagram_business_id": "FC_GUIA_PANAMA_IG_BUSINESS_ID",
+  "meta_ad_account_id": "FC_GUIA_PANAMA_AD_ACCOUNT_ID",
+  "whatsapp_business_account_id": "FC_GUIA_PANAMA_WABA_ID",
+  "whatsapp_phone_number_id": "FC_GUIA_PANAMA_PHONE_NUMBER_ID",
+  "channels": {
+    "instagram": true,
+    "facebook": true,
+    "whatsapp": true,
+    "ads": true
+  },
+  "escalation_channels": {
+    "primary": "whatsapp",
+    "contact": "FC_GUIA_PANAMA_ESCALATION_NUMBER"
+  },
+  "auto_response_enabled": false,
+  "require_human_approval_for": [
+    "pricing",
+    "availability",
+    "itinerary_confirmation",
+    "group_bookings"
+  ],
+  "do_not_contact_list": [],
+  "timezone": "America/Panama",
+  "language": "es"
+}

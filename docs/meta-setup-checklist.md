@@ -50,7 +50,7 @@ Para cada marca:
 
 - [ ] Ir a developers.facebook.com
 - [ ] Crear nueva App (tipo Business) o usar App existente
-- [ ] Dar nombre: "KMedia Meta OS" (o el que prefieras)
+- [ ] Dar nombre: "WEDO Meta OS" (o el que prefieras)
 - [ ] Agregar dominio de la Privacy Policy
 - [ ] Agregar URL de Terms of Service (recomendado)
 - [ ] Anotar: `META_APP_ID` y `META_APP_SECRET` en `.env`

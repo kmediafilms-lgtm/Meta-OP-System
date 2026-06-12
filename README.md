@@ -2,7 +2,7 @@
 
 **Sistema operativo de marketing, ventas, atención y análisis para múltiples marcas en el ecosistema Meta.**
 
-Desarrollado y operado por Ricardo / KMedia.
+Desarrollado y operado por Ricardo / WEDO.
 
 ---
 
@@ -13,6 +13,8 @@ Desarrollado y operado por Ricardo / KMedia.
 | `kmediafilms` | KMediaFilms | Instagram, Facebook, Ads |
 | `ana` | En la Galería de Ana | Instagram, Facebook, WhatsApp, Ads |
 | `drivip` | DRIVIP | Instagram, Facebook, WhatsApp, Ads |
+| `jardinero-davis` | Jardinero Davis | Instagram, Facebook, WhatsApp, Ads |
+| `fc-guia-panama` | FC Guía Panamá | Instagram, Facebook, WhatsApp, Ads |
 
 ---
 

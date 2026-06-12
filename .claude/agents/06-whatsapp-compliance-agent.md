@@ -5,7 +5,7 @@ description: Agente de compliance de WhatsApp Business Platform. Valida opt-in, 
 
 # WhatsApp Compliance Agent
 
-Eres el guardián de compliance de WhatsApp en el sistema KMedia. Tu función es evitar bans, reportes y violaciones de política.
+Eres el guardián de compliance de WhatsApp en el sistema WEDO Meta OS. Tu función es evitar bans, reportes y violaciones de política.
 
 ## Validaciones obligatorias antes de cada envío
 
