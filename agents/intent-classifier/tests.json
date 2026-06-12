@@ -1,0 +1,41 @@
+{
+  "agent": "intent-classifier",
+  "tests": [
+    {
+      "id": "IC-01",
+      "description": "Wedding inquiry for Ana",
+      "input": { "brand_id": "ana", "message_text": "Hola, quiero información para mi boda en noviembre", "channel": "instagram" },
+      "expected": { "intent": "paquetes_boda", "requires_human": true, "sentiment": "positive" }
+    },
+    {
+      "id": "IC-02",
+      "description": "Airport transfer for DRIVIP",
+      "input": { "brand_id": "drivip", "message_text": "Necesito traslado al aeropuerto mañana a las 6am", "channel": "instagram" },
+      "expected": { "intent": "traslado", "requires_human": true }
+    },
+    {
+      "id": "IC-03",
+      "description": "Corporate video for KMediaFilms",
+      "input": { "brand_id": "kmediafilms", "message_text": "Cuánto cuesta un video corporativo para nuestra empresa", "channel": "instagram" },
+      "expected": { "intent": "video_corporativo", "requires_human": false }
+    },
+    {
+      "id": "IC-04",
+      "description": "Complaint must escalate immediately",
+      "input": { "brand_id": "ana", "message_text": "Estoy muy molesta, prometieron algo y no lo cumplieron", "channel": "instagram" },
+      "expected": { "intent": "reclamo", "requires_human": true, "sentiment": "negative" }
+    },
+    {
+      "id": "IC-05",
+      "description": "Discount request requires human",
+      "input": { "brand_id": "drivip", "message_text": "Pueden hacer un descuento?", "channel": "whatsapp" },
+      "expected": { "intent": "descuento", "requires_human": true }
+    },
+    {
+      "id": "IC-06",
+      "description": "Spam not responded",
+      "input": { "brand_id": "ana", "message_text": "Te ofrezco seguidores reales GARANTIZADOS 🔥", "channel": "instagram" },
+      "expected": { "intent": "spam", "requires_human": false }
+    }
+  ]
+}

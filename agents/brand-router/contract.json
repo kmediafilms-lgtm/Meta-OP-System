@@ -1,0 +1,53 @@
+{
+  "name": "brand-router",
+  "version": "1.0.0",
+  "description": "Detectar a qué marca pertenece un evento entrante de Meta usando page_id, instagram_business_id o ad_account_id. Nunca mezcla marcas. Si no puede identificar, escala a revisión humana.",
+  "max_tokens": 512,
+  "purpose": "Detectar a qué marca pertenece un evento entrante de Meta usando page_id, instagram_business_id o ad_account_id. Nunca mezcla marcas. Si no puede identificar, escala a revisión humana.",
+  "input_schema": {
+    "type": "object",
+    "required": ["raw_payload"],
+    "properties": {
+      "raw_payload": { "type": "object", "description": "Payload crudo del webhook de Meta" },
+      "source_page_id": { "type": "string" },
+      "source_ig_id": { "type": "string" },
+      "source_ad_account_id": { "type": "string" },
+      "source_phone_id": { "type": "string" },
+      "event_type": { "type": "string" }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["brand_id", "confidence", "source", "channel", "requires_human", "reason"],
+    "properties": {
+      "brand_id": { "type": "string", "description": "ID de la marca detectada o 'unidentified'" },
+      "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+      "source": { "type": "string", "description": "ID usado para la detección" },
+      "channel": { "type": "string", "enum": ["instagram", "whatsapp", "facebook", "ads", "unknown"] },
+      "requires_human": { "type": "boolean" },
+      "reason": { "type": "string" }
+    }
+  },
+  "allowed_actions": [
+    "read_brand_map",
+    "normalize_payload",
+    "log_routing_event"
+  ],
+  "blocked_actions": [
+    "send_message",
+    "modify_campaign",
+    "write_to_crm_directly",
+    "call_meta_api",
+    "access_whatsapp"
+  ],
+  "requires_human_rules": [
+    "brand_id === 'unidentified'",
+    "confidence < 0.5",
+    "multiple brand candidates detected"
+  ],
+  "failure_modes": [
+    { "condition": "unknown_page_id", "action": "return unidentified, escalate to human" },
+    { "condition": "missing_payload", "action": "return error, log event" },
+    { "condition": "brand_map_outdated", "action": "log warning, use best match, flag for review" }
+  ]
+}

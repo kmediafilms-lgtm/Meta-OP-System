@@ -1,0 +1,108 @@
+{
+  "name": "lead-scoring",
+  "version": "1.0.0",
+  "purpose": "Puntuar un lead entre 0-100 y clasificarlo como caliente/tibio/frío. Define el próximo paso de seguimiento por marca.",
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "brand_id",
+      "lead_id",
+      "intent",
+      "message_text"
+    ],
+    "properties": {
+      "brand_id": {
+        "type": "string"
+      },
+      "lead_id": {
+        "type": "string"
+      },
+      "intent": {
+        "type": "string"
+      },
+      "message_text": {
+        "type": "string"
+      },
+      "channel": {
+        "type": "string"
+      },
+      "event_date_mentioned": {
+        "type": "string"
+      },
+      "budget_mentioned": {
+        "type": "boolean"
+      },
+      "previous_interactions": {
+        "type": "integer"
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": [
+      "lead_score",
+      "temperature",
+      "reason",
+      "next_action"
+    ],
+    "properties": {
+      "lead_score": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 100
+      },
+      "temperature": {
+        "type": "string",
+        "enum": [
+          "cold",
+          "warm",
+          "hot"
+        ]
+      },
+      "reason": {
+        "type": "string"
+      },
+      "next_action": {
+        "type": "string"
+      },
+      "followup_day": {
+        "type": "integer",
+        "description": "D0=hoy, D1=mañana, D3=3 días, D7=semana"
+      }
+    }
+  },
+  "scoring_weights": {
+    "urgency_date": 30,
+    "clarity_of_intent": 25,
+    "budget_signal": 20,
+    "interaction_quality": 15,
+    "channel_quality": 10
+  },
+  "thresholds": {
+    "hot": 75,
+    "warm": 40,
+    "cold": 0
+  },
+  "allowed_actions": [
+    "score_lead",
+    "read_brand_config",
+    "log_score"
+  ],
+  "blocked_actions": [
+    "send_message",
+    "modify_campaign",
+    "call_meta_api"
+  ],
+  "requires_human_rules": [
+    "temperature === 'hot'",
+    "intent IN ['reclamo', 'descuento', 'contrato_pago']"
+  ],
+  "failure_modes": [
+    {
+      "condition": "insufficient_data",
+      "action": "return cold score with low confidence"
+    }
+  ],
+  "description": "Puntuar un lead entre 0-100 y clasificarlo como caliente/tibio/frío. Define el próximo paso de seguimiento por marca.",
+  "max_tokens": 1024
+}

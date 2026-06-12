@@ -1,0 +1,97 @@
+{
+  "name": "copy-conversion",
+  "version": "1.0.0",
+  "purpose": "Redactar respuestas, hooks y seguimientos con el tono exacto de cada marca. Produce borradores — nunca envía. El envío requiere aprobación explícita.",
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "brand_id",
+      "intent",
+      "message_text"
+    ],
+    "properties": {
+      "brand_id": {
+        "type": "string"
+      },
+      "intent": {
+        "type": "string"
+      },
+      "message_text": {
+        "type": "string"
+      },
+      "lead_temperature": {
+        "type": "string",
+        "enum": [
+          "cold",
+          "warm",
+          "hot"
+        ]
+      },
+      "contact_name": {
+        "type": "string"
+      },
+      "followup_day": {
+        "type": "integer"
+      },
+      "context": {
+        "type": "string"
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": [
+      "draft_reply",
+      "tone_used",
+      "cta",
+      "requires_human"
+    ],
+    "properties": {
+      "draft_reply": {
+        "type": "string"
+      },
+      "tone_used": {
+        "type": "string"
+      },
+      "cta": {
+        "type": "string"
+      },
+      "requires_human": {
+        "type": "boolean"
+      },
+      "do_not_send": {
+        "type": "boolean",
+        "const": true,
+        "description": "Siempre true — nunca auto-enviar"
+      }
+    }
+  },
+  "allowed_actions": [
+    "generate_draft",
+    "read_tone_guide",
+    "log_draft"
+  ],
+  "blocked_actions": [
+    "send_message",
+    "send_reply",
+    "post_comment",
+    "modify_campaign"
+  ],
+  "requires_human_rules": [
+    "intent IN ['precio', 'cotizacion', 'reclamo', 'descuento', 'contrato_pago']",
+    "lead_temperature === 'hot'",
+    "followup_day > 3"
+  ],
+  "failure_modes": [
+    {
+      "condition": "unknown_brand",
+      "action": "refuse to generate, log error"
+    },
+    {
+      "condition": "sensitive_intent",
+      "action": "generate with explicit human_approval flag"
+    }
+  ],
+  "description": "Redactar respuestas, hooks y seguimientos con el tono exacto de cada marca. Produce borradores — nunca envía. El envío requiere aprobación explícita.",
+  "max_tokens": 1024
+}

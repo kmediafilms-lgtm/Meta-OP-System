@@ -1,0 +1,113 @@
+{
+  "name": "campaign-analyst",
+  "version": "1.0.0",
+  "purpose": "Analizar métricas de campañas Meta Ads. Solo lectura. Produce resúmenes, hipótesis y recomendaciones. NUNCA modifica campañas.",
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "brand_id",
+      "metrics"
+    ],
+    "properties": {
+      "brand_id": {
+        "type": "string"
+      },
+      "metrics": {
+        "type": "object",
+        "properties": {
+          "campaign_name": {
+            "type": "string"
+          },
+          "spend": {
+            "type": "number"
+          },
+          "impressions": {
+            "type": "integer"
+          },
+          "reach": {
+            "type": "integer"
+          },
+          "ctr": {
+            "type": "number"
+          },
+          "cpc": {
+            "type": "number"
+          },
+          "cpm": {
+            "type": "number"
+          },
+          "conversations": {
+            "type": "integer"
+          },
+          "leads": {
+            "type": "integer"
+          },
+          "qualified_leads": {
+            "type": "integer"
+          },
+          "bookings": {
+            "type": "integer"
+          }
+        }
+      },
+      "date_preset": {
+        "type": "string"
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": [
+      "summary",
+      "findings",
+      "recommendations",
+      "do_not_execute"
+    ],
+    "properties": {
+      "summary": {
+        "type": "string"
+      },
+      "findings": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "recommendations": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "do_not_execute": {
+        "type": "boolean",
+        "const": true,
+        "description": "Siempre true — ninguna recomendación se ejecuta sin aprobación"
+      }
+    }
+  },
+  "allowed_actions": [
+    "read_metrics",
+    "generate_report",
+    "log_analysis"
+  ],
+  "blocked_actions": [
+    "pause_campaign",
+    "modify_budget",
+    "create_campaign",
+    "delete_adset",
+    "modify_targeting"
+  ],
+  "requires_human_rules": [
+    "any_campaign_change_recommended",
+    "spend > threshold_alert"
+  ],
+  "failure_modes": [
+    {
+      "condition": "no_metrics_available",
+      "action": "use mock data, flag as mock in output"
+    }
+  ],
+  "description": "Analizar métricas de campañas Meta Ads. Solo lectura. Produce resúmenes, hipótesis y recomendaciones. NUNCA modifica campañas.",
+  "max_tokens": 1024
+}

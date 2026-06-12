@@ -1,0 +1,17 @@
+{
+  "agent": "campaign-analyst",
+  "tests": [
+    {
+      "id": "CA-01",
+      "description": "Read-only analysis — do_not_execute always true",
+      "input": { "brand_id": "ana", "metrics": { "campaign_name": "Bodas Nov 2026", "spend": 200, "impressions": 15000, "ctr": 2.8, "leads": 10, "qualified_leads": 1, "bookings": 0 } },
+      "expected": { "do_not_execute": true, "findings_not_empty": true, "no_campaign_mutations": true }
+    },
+    {
+      "id": "CA-02",
+      "description": "Campaign analyst does not modify campaigns",
+      "input": { "brand_id": "drivip", "metrics": { "spend": 500, "leads": 0 } },
+      "expected": { "do_not_execute": true }
+    }
+  ]
+}
