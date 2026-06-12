@@ -1,0 +1,57 @@
+{
+  "brand_id": "fc-guia-panama",
+  "brand_name": "FC Guía Panamá",
+  "business_unit": "Turismo y guías locales",
+  "active_status": true,
+  "facebook_page_id": "PLACEHOLDER_FC_GUIA_PANAMA_FACEBOOK_PAGE_ID",
+  "instagram_business_id": "PLACEHOLDER_FC_GUIA_PANAMA_IG_BUSINESS_ID",
+  "whatsapp_waba_id": "PLACEHOLDER_FC_GUIA_PANAMA_WABA_ID",
+  "whatsapp_phone_number_id": "PLACEHOLDER_FC_GUIA_PANAMA_PHONE_NUMBER_ID",
+  "meta_ad_account_id": "PLACEHOLDER_FC_GUIA_PANAMA_AD_ACCOUNT_ID",
+  "crm_sheet_id": "PLACEHOLDER_FC_GUIA_PANAMA_GOOGLE_SHEET_ID",
+  "default_language": "es",
+  "tone_profile": "Entusiasta, local, auténtico, hospitalario. No confirmar disponibilidad, precios o itinerarios sin validación humana. Mezcla orgullo por el destino con practicidad del viajero.",
+  "services": [
+    "Tours locales: Ciudad de Panamá, Casco Viejo, Miraflores, Biomuseo",
+    "Ecoturismo: Gamboa, parques naturales, avistamiento de aves",
+    "Tours de playa: Taboga, Contadora, San Blas",
+    "Experiencias culturales: mercados, gastronomía, historia",
+    "Tours privados con itinerario personalizado",
+    "Traslados turísticos"
+  ],
+  "pricing_rules": {
+    "can_auto_share_prices": false,
+    "requires_human_for_quote": true,
+    "notes": "Los precios varían por tamaño del grupo, destino y duración. No dar precio sin conocer fecha, grupo y tipo de tour."
+  },
+  "human_approval_required_for": [
+    "cotizacion",
+    "disponibilidad_guia",
+    "reserva",
+    "itinerario_personalizado",
+    "grupos_grandes",
+    "descuento",
+    "reclamo",
+    "campaign_change"
+  ],
+  "allowed_automations": [
+    "intent_classification",
+    "lead_scoring",
+    "initial_response_generic",
+    "destination_information",
+    "campaign_reporting"
+  ],
+  "blocked_automations": [
+    "price_confirmation",
+    "booking_confirmation",
+    "guide_assignment",
+    "cold_dm",
+    "campaign_modification"
+  ],
+  "responsible_users": ["Ricardo"],
+  "escalation_channels": {
+    "whatsapp": "PLACEHOLDER_RICARDO_WHATSAPP",
+    "email": "kmediafilms@gmail.com",
+    "n8n_notification": true
+  }
+}

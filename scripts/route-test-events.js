@@ -11,18 +11,24 @@ const args = process.argv.slice(2);
 // Mapa de IDs a brand_id (usa vars de entorno o placeholders para pruebas)
 const BRAND_MAP = {
   page_ids: {
-    [process.env.KMEDIA_FACEBOOK_PAGE_ID || 'PLACEHOLDER_KMEDIA_FACEBOOK_PAGE_ID']: 'kmediafilms',
-    [process.env.ANA_FACEBOOK_PAGE_ID || 'PLACEHOLDER_ANA_FACEBOOK_PAGE_ID']: 'ana',
-    [process.env.DRIVIP_FACEBOOK_PAGE_ID || 'PLACEHOLDER_DRIVIP_FACEBOOK_PAGE_ID']: 'drivip',
+    [process.env.KMEDIA_FACEBOOK_PAGE_ID || '1009115316143644']: 'kmediafilms',
+    [process.env.ANA_FACEBOOK_PAGE_ID || '1043326452200695']: 'ana',
+    [process.env.DRIVIP_FACEBOOK_PAGE_ID || '1158307954030806']: 'drivip',
+    [process.env.JARDINERO_DAVIS_FACEBOOK_PAGE_ID || 'PLACEHOLDER_JARDINERO_DAVIS_FACEBOOK_PAGE_ID']: 'jardinero-davis',
+    [process.env.FC_GUIA_PANAMA_FACEBOOK_PAGE_ID || 'PLACEHOLDER_FC_GUIA_PANAMA_FACEBOOK_PAGE_ID']: 'fc-guia-panama',
   },
   ig_ids: {
-    [process.env.KMEDIA_IG_BUSINESS_ID || 'PLACEHOLDER_KMEDIA_IG_BUSINESS_ID']: 'kmediafilms',
-    [process.env.ANA_IG_BUSINESS_ID || 'PLACEHOLDER_ANA_IG_BUSINESS_ID']: 'ana',
-    [process.env.DRIVIP_IG_BUSINESS_ID || 'PLACEHOLDER_DRIVIP_IG_BUSINESS_ID']: 'drivip',
+    [process.env.KMEDIA_IG_BUSINESS_ID || '17841400348662832']: 'kmediafilms',
+    [process.env.ANA_IG_BUSINESS_ID || '17841450875047591']: 'ana',
+    [process.env.DRIVIP_IG_BUSINESS_ID || '17841447217470964']: 'drivip',
+    [process.env.JARDINERO_DAVIS_IG_BUSINESS_ID || 'PLACEHOLDER_JARDINERO_DAVIS_IG_BUSINESS_ID']: 'jardinero-davis',
+    [process.env.FC_GUIA_PANAMA_IG_BUSINESS_ID || 'PLACEHOLDER_FC_GUIA_PANAMA_IG_BUSINESS_ID']: 'fc-guia-panama',
   },
   phone_ids: {
     [process.env.ANA_PHONE_NUMBER_ID || 'PLACEHOLDER_ANA_PHONE_NUMBER_ID']: 'ana',
     [process.env.DRIVIP_PHONE_NUMBER_ID || 'PLACEHOLDER_DRIVIP_PHONE_NUMBER_ID']: 'drivip',
+    [process.env.JARDINERO_DAVIS_PHONE_NUMBER_ID || 'PLACEHOLDER_JARDINERO_DAVIS_PHONE_NUMBER_ID']: 'jardinero-davis',
+    [process.env.FC_GUIA_PANAMA_PHONE_NUMBER_ID || 'PLACEHOLDER_FC_GUIA_PANAMA_PHONE_NUMBER_ID']: 'fc-guia-panama',
   }
 };
 

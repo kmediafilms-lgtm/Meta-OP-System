@@ -204,6 +204,104 @@ const TEST_PAYLOADS = {
     expected_action: "escalate_to_human_unidentified_brand"
   },
 
+  // ─── NUEVAS MARCAS ──────────────────────────────────────────────────────────
+
+  instagram_dm_jardinero_davis: {
+    description: "DM preguntando por servicio de jardinería para Jardinero Davis",
+    brand_expected: "jardinero-davis",
+    payload: {
+      object: "instagram",
+      entry: [{
+        id: "PLACEHOLDER_JARDINERO_DAVIS_IG_BUSINESS_ID",
+        time: Date.now(),
+        messaging: [{
+          sender: { id: "test_user_010" },
+          recipient: { id: "PLACEHOLDER_JARDINERO_DAVIS_IG_BUSINESS_ID" },
+          timestamp: Date.now(),
+          message: {
+            mid: "test_mid_010",
+            text: "Hola, tengo un jardín en mi casa que necesita mantenimiento urgente, ¿trabajan en zona de Costa del Este?"
+          }
+        }]
+      }]
+    },
+    expected_classification: {
+      intent: "disponibilidad",
+      requires_human: true,
+      lead_temperature: "warm"
+    }
+  },
+
+  instagram_dm_fc_guia_panama: {
+    description: "DM preguntando por tours para FC Guía Panamá",
+    brand_expected: "fc-guia-panama",
+    payload: {
+      object: "instagram",
+      entry: [{
+        id: "PLACEHOLDER_FC_GUIA_PANAMA_IG_BUSINESS_ID",
+        time: Date.now(),
+        messaging: [{
+          sender: { id: "test_user_011" },
+          recipient: { id: "PLACEHOLDER_FC_GUIA_PANAMA_IG_BUSINESS_ID" },
+          timestamp: Date.now(),
+          message: {
+            mid: "test_mid_011",
+            text: "Hi! We are 4 people arriving to Panama City next Friday. We would like a private tour of the canal and Casco Viejo. Are you available?"
+          }
+        }]
+      }]
+    },
+    expected_classification: {
+      intent: "reserva",
+      requires_human: true,
+      lead_temperature: "hot"
+    }
+  },
+
+  // ─── AD ACCOUNT EVENTS ──────────────────────────────────────────────────────
+
+  ad_account_event_ana: {
+    description: "Evento de cuenta publicitaria Ana (act_2189268925168947)",
+    brand_expected: "ana",
+    payload: {
+      object: "adaccount",
+      entry: [{
+        id: "act_2189268925168947",
+        time: Date.now(),
+        changes: [{
+          field: "campaign",
+          value: { campaign_id: "test_campaign_001", status: "ACTIVE" }
+        }]
+      }]
+    },
+    expected_classification: {
+      intent: "campaign_event",
+      requires_human: true,
+      note: "Cambios en campañas siempre requieren aprobación humana"
+    }
+  },
+
+  ad_account_event_drivip: {
+    description: "Evento de cuenta publicitaria DRIVIP (act_1861455161486718)",
+    brand_expected: "drivip",
+    payload: {
+      object: "adaccount",
+      entry: [{
+        id: "act_1861455161486718",
+        time: Date.now(),
+        changes: [{
+          field: "campaign",
+          value: { campaign_id: "test_campaign_002", status: "PAUSED" }
+        }]
+      }]
+    },
+    expected_classification: {
+      intent: "campaign_event",
+      requires_human: true,
+      note: "Cambios en campañas siempre requieren aprobación humana"
+    }
+  },
+
   // ─── CAMPAÑAS ───────────────────────────────────────────────────────────────
 
   campaign_good_ctr_bad_leads: {

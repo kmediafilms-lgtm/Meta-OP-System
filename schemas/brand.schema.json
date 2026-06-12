@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Brand",
-  "description": "Configuración completa de una marca en el sistema KMedia Meta OS WEDO",
+  "description": "Configuración completa de una marca en el sistema WEDO Meta OS",
   "type": "object",
   "required": ["brand_id", "brand_name", "facebook_page_id", "instagram_business_id", "meta_ad_account_id", "active_status"],
   "properties": {

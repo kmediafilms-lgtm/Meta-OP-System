@@ -1,7 +1,7 @@
 # AUDIT.md — Auditoría inicial del proyecto
 
 **Fecha:** 2026-06-12
-**Proyecto:** Meta Operating System WEDO — KMedia
+**Proyecto:** WEDO Meta OS
 
 ---
 
