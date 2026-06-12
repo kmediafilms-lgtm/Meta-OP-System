@@ -53,7 +53,15 @@ function guessBrand(...values) {
     },
     {
       brand_id: 'en-la-galeria-de-ana',
-      patterns: ['galeria de ana', 'en la galeria de ana', 'galeria ana', 'galeriaana', 'ana bodas']
+      patterns: [
+        'enlagaleriadeana',
+        'en la galeria de ana',
+        'galeria de ana',
+        'galeriadeana',
+        'galeria ana',
+        'galeriaana',
+        'ana bodas'
+      ]
     },
     {
       brand_id: 'drivip',
@@ -157,6 +165,53 @@ async function discoverBusinesses() {
   return businesses;
 }
 
+async function discoverBusinessesSafe(errors) {
+  try {
+    return await discoverBusinesses();
+  } catch (error) {
+    errors.push(formatGraphError(error, { edge: 'me_businesses', path: '/me/businesses' }));
+    if (BUSINESS_ID) return [];
+    throw error;
+  }
+}
+
+async function discoverBusinessDetails(businessId, errors) {
+  try {
+    const business = await graphGet(`/${businessId}`, { fields: 'id,name' });
+    return {
+      id: business.id || businessId,
+      name: business.name || 'Provided Business ID'
+    };
+  } catch (error) {
+    errors.push(formatGraphError(error, { edge: 'business', path: `/${businessId}` }));
+    return { id: businessId, name: 'Provided Business ID' };
+  }
+}
+
+async function enrichInstagramBusinessAccount(instagramBusinessId, errors) {
+  if (!instagramBusinessId) {
+    return { id: '', username: '', name: '' };
+  }
+
+  try {
+    const account = await graphGet(`/${instagramBusinessId}`, {
+      fields: 'id,username,name'
+    });
+
+    return {
+      id: account.id || instagramBusinessId,
+      username: account.username || '',
+      name: account.name || ''
+    };
+  } catch (error) {
+    errors.push(formatGraphError(error, {
+      edge: 'instagram_business_account',
+      path: `/${instagramBusinessId}`
+    }));
+    return { id: instagramBusinessId, username: '', name: '' };
+  }
+}
+
 async function discoverPages(businessId, edge, source, errors) {
   const pages = await getAllPagesWithErrors(`/${businessId}/${edge}`, {
     fields: 'id,name,username,link'
@@ -166,6 +221,7 @@ async function discoverPages(businessId, edge, source, errors) {
 
   for (const page of pages) {
     let instagramBusinessId = '';
+    let instagramAccount = { id: '', username: '', name: '' };
 
     try {
       const pageDetails = await graphGet(`/${page.id}`, {
@@ -180,14 +236,20 @@ async function discoverPages(businessId, edge, source, errors) {
       instagramBusinessId = '';
     }
 
+    if (instagramBusinessId) {
+      instagramAccount = await enrichInstagramBusinessAccount(instagramBusinessId, errors);
+    }
+
     enriched.push({
       page_id: page.id || '',
       page_name: page.name || '',
       username: page.username || '',
       link: page.link || '',
       instagram_business_id: instagramBusinessId,
+      instagram_username: instagramAccount.username || '',
+      instagram_name: instagramAccount.name || '',
       source,
-      matched_brand_guess: guessBrand(page.name, page.username, page.link)
+      matched_brand_guess: guessBrand(page.name, page.username, page.link, instagramAccount.username, instagramAccount.name)
     });
   }
 
@@ -196,7 +258,7 @@ async function discoverPages(businessId, edge, source, errors) {
 
 async function discoverAdAccounts(businessId, edge, source, errors) {
   const accounts = await getAllPagesWithErrors(`/${businessId}/${edge}`, {
-    fields: 'id,name,account_id,account_status,currency,timezone_name'
+    fields: 'id,name,account_status,currency,timezone_name'
   }, { edge: source }, errors);
 
   return accounts.map((account) => ({
@@ -236,14 +298,14 @@ function buildBrandSuggestions(pages, adAccounts) {
 
 async function main() {
   const graph_errors = [];
-  const businesses = await discoverBusinesses();
+  const businesses = await discoverBusinessesSafe(graph_errors);
 
   if (!businesses.length && !BUSINESS_ID) {
     throw new Error('No businesses returned by /me/businesses and META_BUSINESS_ID was not provided.');
   }
 
   const selectedBusiness = BUSINESS_ID
-    ? { id: BUSINESS_ID, name: businesses.find((b) => b.id === BUSINESS_ID)?.name || 'Provided Business ID' }
+    ? (businesses.find((b) => b.id === BUSINESS_ID) || await discoverBusinessDetails(BUSINESS_ID, graph_errors))
     : businesses[0];
 
   const [ownedPages, clientPages, ownedAdAccounts, clientAdAccounts] = await Promise.all([
