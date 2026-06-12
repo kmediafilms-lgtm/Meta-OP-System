@@ -1,0 +1,29 @@
+{
+  "agent": "copy-conversion",
+  "tests": [
+    {
+      "id": "CC-01",
+      "description": "Draft generated for Ana wedding inquiry — not sent",
+      "input": { "brand_id": "ana", "intent": "paquetes_boda", "message_text": "Hola quiero info para mi boda", "lead_temperature": "warm" },
+      "expected": { "requires_human": true, "do_not_send": true, "draft_reply_not_empty": true }
+    },
+    {
+      "id": "CC-02",
+      "description": "Draft generated for DRIVIP transfer — not sent",
+      "input": { "brand_id": "drivip", "intent": "traslado", "message_text": "necesito traslado al aeropuerto", "lead_temperature": "hot" },
+      "expected": { "requires_human": true, "do_not_send": true, "tone_contains": "drivip" }
+    },
+    {
+      "id": "CC-03",
+      "description": "Draft generated for KMediaFilms video — not sent",
+      "input": { "brand_id": "kmediafilms", "intent": "video_corporativo", "message_text": "cuanto cuesta un video corporativo", "lead_temperature": "warm" },
+      "expected": { "requires_human": false, "do_not_send": true, "draft_reply_not_empty": true }
+    },
+    {
+      "id": "CC-04",
+      "description": "Reclamo always requires human",
+      "input": { "brand_id": "ana", "intent": "reclamo", "message_text": "estoy muy molesta", "lead_temperature": "hot" },
+      "expected": { "requires_human": true, "do_not_send": true }
+    }
+  ]
+}

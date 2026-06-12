@@ -1,0 +1,17 @@
+{
+  "agent": "human-approval",
+  "tests": [
+    {
+      "id": "HA-01",
+      "description": "Critical escalation formatted correctly",
+      "input": { "brand_id": "ana", "action_type": "message_reply", "payload": {}, "reason": "Reclamo con urgencia", "risk_level": "critical", "draft_response": "Disculpe los inconvenientes..." },
+      "expected": { "approval_required": true, "risk_level": "critical", "expires_in_minutes": 15 }
+    },
+    {
+      "id": "HA-02",
+      "description": "Campaign change always requires human",
+      "input": { "brand_id": "drivip", "action_type": "campaign_change", "payload": { "action": "increase_budget" }, "reason": "Bajo rendimiento detectado", "risk_level": "high", "draft_response": "" },
+      "expected": { "approval_required": true, "risk_level": "high" }
+    }
+  ]
+}

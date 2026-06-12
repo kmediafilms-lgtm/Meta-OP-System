@@ -1,0 +1,92 @@
+{
+  "name": "learning",
+  "version": "1.0.0",
+  "purpose": "Detectar patrones de éxito y fracaso en conversaciones y campañas. Generar notas de aprendizaje para mejorar el sistema con el tiempo.",
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "brand_id",
+      "source",
+      "data"
+    ],
+    "properties": {
+      "brand_id": {
+        "type": "string"
+      },
+      "source": {
+        "type": "string",
+        "enum": [
+          "conversation",
+          "campaign",
+          "lead"
+        ]
+      },
+      "data": {
+        "type": "object"
+      },
+      "outcome": {
+        "type": "string",
+        "enum": [
+          "won",
+          "lost",
+          "converted",
+          "dropped",
+          "unknown"
+        ]
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": [
+      "learning_note",
+      "pattern",
+      "recommendation",
+      "confidence"
+    ],
+    "properties": {
+      "learning_note": {
+        "type": "string"
+      },
+      "pattern": {
+        "type": "string"
+      },
+      "recommendation": {
+        "type": "string"
+      },
+      "confidence": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    }
+  },
+  "allowed_actions": [
+    "analyze_pattern",
+    "generate_note",
+    "log_learning",
+    "read_historical_data"
+  ],
+  "blocked_actions": [
+    "modify_campaign",
+    "send_message",
+    "auto_apply_learning",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
+  ],
+  "requires_human_rules": [
+    "confidence < 0.5 — human validation required before acting on note",
+    "recommendation involves campaign budget change"
+  ],
+  "failure_modes": [
+    {
+      "condition": "insufficient_data",
+      "action": "return low-confidence note, flag for more data"
+    }
+  ],
+  "description": "Detectar patrones de éxito y fracaso en conversaciones y campañas. Generar notas de aprendizaje para mejorar el sistema con el tiempo.",
+  "max_tokens": 1024
+}

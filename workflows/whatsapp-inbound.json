@@ -1,5 +1,6 @@
 {
   "name": "whatsapp-inbound",
+  "active": false,
   "description": "Procesa mensajes de WhatsApp con todas las validaciones de compliance.",
   "trigger": {
     "type": "whatsapp_trigger",
@@ -75,15 +76,23 @@
     },
     {
       "id": "13",
-      "name": "Send Free Form Message",
-      "type": "n8n-nodes-base.whatsApp",
-      "parameters": { "note": "Enviar mensaje libre (dentro de ventana)" }
+      "name": "Send Free Form Message [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
+      "parameters": {
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
+      }
     },
     {
       "id": "14",
-      "name": "Send Approved Template",
-      "type": "n8n-nodes-base.whatsApp",
-      "parameters": { "note": "Enviar template aprobado (fuera de ventana)" }
+      "name": "Send Approved Template [DISABLED — FUTURE PHASE]",
+      "type": "n8n-nodes-base.noOp",
+      "disabled": true,
+      "parameters": {
+        "safe_mode": true,
+        "note": "SAFE MODE / DRAFT ONLY — Not part of Control Plane v1. Requires: credentials configured + opt-in verified + Ricardo explicit approval."
+      }
     },
     {
       "id": "15",

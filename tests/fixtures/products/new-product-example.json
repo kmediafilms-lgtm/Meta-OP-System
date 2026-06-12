@@ -1,0 +1,44 @@
+{
+  "_comment": "Example fixture showing how a future product would be added to the Product Registry. Copy this file, fill in real values, and create brands/<slug>/brand-config.json. No code changes required.",
+  "_routing_note": "IMPORTANT: A draft product will NOT route events even if Meta IDs are present. Only activation_status=active or activation_status=testing products are routed. Set activation_status to 'testing' only after IDs are confirmed and routing is validated.",
+  "product_id": "nuevo-cliente-ejemplo",
+  "brand_id": "nuevo-cliente-ejemplo",
+  "product_name": "Nuevo Cliente Ejemplo",
+  "slug": "nuevo-cliente-ejemplo",
+  "active_status": false,
+  "activation_status": "draft",
+  "routing_blocked_reason": "activation_status is draft — only testing/active products route events",
+  "business_unit": "Categoría del negocio",
+  "default_language": "es",
+  "facebook_page_id": "REPLACE_WITH_REAL_PAGE_ID",
+  "instagram_business_id": "REPLACE_WITH_REAL_IG_ID",
+  "meta_ad_account_id": "REPLACE_WITH_REAL_AD_ACCOUNT",
+  "whatsapp_phone_number_id": "",
+  "tone_profile": "professional_friendly",
+  "services": [
+    "Servicio principal 1",
+    "Servicio principal 2"
+  ],
+  "routing_rules": {
+    "match_facebook_page_id": true,
+    "match_instagram_business_id": true,
+    "match_ad_account_id": true,
+    "match_phone_number_id": false
+  },
+  "human_approval_required_for": [
+    "precio",
+    "cotizacion",
+    "reclamo"
+  ],
+  "responsible_users": ["ricardo"],
+  "onboarding_status": {
+    "brand_config_created": true,
+    "meta_ids_confirmed": false,
+    "routing_validated": false,
+    "n8n_workflow_added": false,
+    "human_approved_for_live": false
+  },
+  "meta_connection_status": "not_configured",
+  "created_at": "2026-01-01T00:00:00Z",
+  "updated_at": "2026-01-01T00:00:00Z"
+}

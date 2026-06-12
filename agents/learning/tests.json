@@ -1,0 +1,17 @@
+{
+  "agent": "learning",
+  "tests": [
+    {
+      "id": "LN-01",
+      "description": "Learning note generated from won conversation",
+      "input": { "brand_id": "ana", "source": "conversation", "data": { "first_message": "Me caso en noviembre", "outcome": "booked" }, "outcome": "won" },
+      "expected": { "learning_note_not_empty": true, "pattern_not_empty": true, "confidence_gt_zero": true }
+    },
+    {
+      "id": "LN-02",
+      "description": "Learning does not auto-apply recommendations",
+      "input": { "brand_id": "drivip", "source": "campaign", "data": { "campaign": "test", "ctr": 0.5 }, "outcome": "unknown" },
+      "expected": { "no_campaign_mutations": true }
+    }
+  ]
+}

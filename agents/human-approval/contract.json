@@ -1,0 +1,112 @@
+{
+  "name": "human-approval",
+  "version": "1.0.0",
+  "purpose": "Gestionar el flujo de aprobación humana para acciones sensibles. Formatea la alerta, registra el estado, espera respuesta y procesa la decisión.",
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "brand_id",
+      "action_type",
+      "payload",
+      "reason",
+      "risk_level",
+      "draft_response"
+    ],
+    "properties": {
+      "brand_id": {
+        "type": "string"
+      },
+      "action_type": {
+        "type": "string"
+      },
+      "payload": {
+        "type": "object"
+      },
+      "reason": {
+        "type": "string"
+      },
+      "risk_level": {
+        "type": "string",
+        "enum": [
+          "low",
+          "medium",
+          "high",
+          "critical"
+        ]
+      },
+      "draft_response": {
+        "type": "string"
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": [
+      "approval_required",
+      "risk_level",
+      "reason",
+      "suggested_action"
+    ],
+    "properties": {
+      "approval_required": {
+        "type": "boolean",
+        "const": true
+      },
+      "risk_level": {
+        "type": "string",
+        "enum": [
+          "low",
+          "medium",
+          "high",
+          "critical"
+        ]
+      },
+      "reason": {
+        "type": "string"
+      },
+      "suggested_action": {
+        "type": "string"
+      },
+      "expires_in_minutes": {
+        "type": "integer"
+      }
+    }
+  },
+  "timeouts_by_risk": {
+    "critical": 15,
+    "high": 120,
+    "medium": 1440,
+    "low": 1440
+  },
+  "allowed_actions": [
+    "format_alert",
+    "log_approval_record",
+    "notify_responsible",
+    "update_approval_status"
+  ],
+  "blocked_actions": [
+    "execute_without_approval",
+    "auto_approve",
+    "override_rejection",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
+  ],
+  "requires_human_rules": [
+    "always — this agent only triggers when human approval is needed"
+  ],
+  "failure_modes": [
+    {
+      "condition": "timeout_no_response",
+      "action": "escalate to Ricardo WhatsApp, log expired"
+    },
+    {
+      "condition": "responsible_unreachable",
+      "action": "block action, log critical alert"
+    }
+  ],
+  "description": "Gestionar el flujo de aprobación humana para acciones sensibles. Formatea la alerta, registra el estado, espera respuesta y procesa la decisión.",
+  "max_tokens": 1024
+}

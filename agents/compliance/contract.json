@@ -1,0 +1,112 @@
+{
+  "name": "compliance",
+  "version": "1.0.0",
+  "purpose": "Validar si una acción automatizada cumple con las políticas de Meta y las reglas del sistema antes de ejecutarla. Bloquea todo lo que sea peligroso, spam, o prohibido por Meta.",
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "brand_id",
+      "action_type",
+      "payload"
+    ],
+    "properties": {
+      "brand_id": {
+        "type": "string"
+      },
+      "action_type": {
+        "type": "string",
+        "enum": [
+          "send_message",
+          "send_template",
+          "reply_comment",
+          "campaign_change",
+          "followup"
+        ]
+      },
+      "payload": {
+        "type": "object"
+      },
+      "contact_opt_in": {
+        "type": "boolean"
+      },
+      "window_status": {
+        "type": "string",
+        "enum": [
+          "open",
+          "closed",
+          "unknown"
+        ]
+      },
+      "do_not_contact": {
+        "type": "boolean"
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": [
+      "allowed",
+      "requires_human",
+      "blocked_reason",
+      "policy_flags"
+    ],
+    "properties": {
+      "allowed": {
+        "type": "boolean"
+      },
+      "requires_human": {
+        "type": "boolean"
+      },
+      "blocked_reason": {
+        "type": "string"
+      },
+      "policy_flags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "allowed_actions": [
+    "validate_action",
+    "check_policy",
+    "log_compliance_result"
+  ],
+  "blocked_actions": [
+    "send_message",
+    "execute_action",
+    "override_policy",
+    "modify_do_not_contact",
+    "browser_automation",
+    "scraping",
+    "campaign_mutation_without_approval",
+    "budget_change_without_approval",
+    "whatsapp_send_without_opt_in"
+  ],
+  "requires_human_rules": [
+    "action_type === 'campaign_change'",
+    "window_status === 'closed' AND no_approved_template",
+    "do_not_contact === true",
+    "action involves pricing or contracts"
+  ],
+  "policy_rules": {
+    "whatsapp_24h_window": "Solo mensajes libres dentro de 24h de respuesta del usuario. Fuera de ventana: solo templates aprobados.",
+    "no_spam": "No enviar el mismo mensaje a múltiples contactos no opt-in.",
+    "no_cold_dm": "No iniciar conversaciones con usuarios que no han interactuado primero.",
+    "no_campaign_automation": "Cambios de presupuesto, pausa o activación siempre requieren aprobación humana.",
+    "do_not_contact": "Si do_not_contact es true, bloquear absolutamente todo envío."
+  },
+  "failure_modes": [
+    {
+      "condition": "missing_opt_in_data",
+      "action": "block and require human review"
+    },
+    {
+      "condition": "whatsapp_window_unknown",
+      "action": "require template, flag for review"
+    }
+  ],
+  "description": "Validar si una acción automatizada cumple con las políticas de Meta y las reglas del sistema antes de ejecutarla. Bloquea todo lo que sea peligroso, spam, o prohibido por Meta.",
+  "max_tokens": 1024
+}

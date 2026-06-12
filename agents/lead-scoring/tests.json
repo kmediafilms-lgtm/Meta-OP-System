@@ -1,0 +1,23 @@
+{
+  "agent": "lead-scoring",
+  "tests": [
+    {
+      "id": "LS-01",
+      "description": "Hot lead — novia con fecha específica",
+      "input": { "brand_id": "ana", "lead_id": "test-001", "intent": "paquetes_boda", "message_text": "Me caso en noviembre en Panamá City, somos 80 invitados, quiero cobertura completa con álbum", "event_date_mentioned": "2026-11-15", "budget_mentioned": true },
+      "expected": { "temperature": "hot", "lead_score_min": 75, "followup_day": 0 }
+    },
+    {
+      "id": "LS-02",
+      "description": "Cold lead — precio genérico sin contexto",
+      "input": { "brand_id": "ana", "lead_id": "test-002", "intent": "precio", "message_text": "cuanto cuesta una foto de boda", "event_date_mentioned": null, "budget_mentioned": false },
+      "expected": { "temperature": "cold", "lead_score_max": 39, "followup_day": 7 }
+    },
+    {
+      "id": "LS-03",
+      "description": "Hot lead — empresa con proyecto DRIVIP",
+      "input": { "brand_id": "drivip", "lead_id": "test-003", "intent": "traslado", "message_text": "Necesito traslado para 4 personas del aeropuerto Tocumen al hotel Marriott el sábado 8am", "event_date_mentioned": "próximo sábado", "budget_mentioned": false },
+      "expected": { "temperature": "hot", "lead_score_min": 70 }
+    }
+  ]
+}

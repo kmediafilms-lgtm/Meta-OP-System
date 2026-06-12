@@ -1,0 +1,29 @@
+{
+  "agent": "compliance",
+  "tests": [
+    {
+      "id": "CO-01",
+      "description": "Compliance blocks do_not_contact",
+      "input": { "brand_id": "drivip", "action_type": "send_message", "payload": {}, "do_not_contact": true, "contact_opt_in": true, "window_status": "open" },
+      "expected": { "allowed": false, "policy_flags": ["do_not_contact_violation"] }
+    },
+    {
+      "id": "CO-02",
+      "description": "Compliance blocks campaign change",
+      "input": { "brand_id": "ana", "action_type": "campaign_change", "payload": { "action": "pause_campaign" }, "do_not_contact": false },
+      "expected": { "allowed": false, "requires_human": true, "policy_flags": ["campaign_mutation_requires_human"] }
+    },
+    {
+      "id": "CO-03",
+      "description": "Message within WhatsApp window allowed",
+      "input": { "brand_id": "drivip", "action_type": "send_message", "payload": { "text": "Hola" }, "contact_opt_in": true, "window_status": "open", "do_not_contact": false },
+      "expected": { "allowed": true, "requires_human": false }
+    },
+    {
+      "id": "CO-04",
+      "description": "Message outside WhatsApp window blocked without template",
+      "input": { "brand_id": "drivip", "action_type": "send_message", "payload": { "text": "Hola de nuevo" }, "contact_opt_in": true, "window_status": "closed", "do_not_contact": false },
+      "expected": { "allowed": false, "policy_flags": ["wa_24h_window_expired"] }
+    }
+  ]
+}
