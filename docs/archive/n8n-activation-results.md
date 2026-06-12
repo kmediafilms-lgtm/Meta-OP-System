@@ -1,3 +1,16 @@
+> **ARCHIVED — HISTORICAL DOCUMENT — DO NOT USE FOR CURRENT PRODUCT SCOPE**
+>
+> This document reflects system state as of the pre–Control Plane v1 session.
+> It contains references to Jardinero Davis and FC Guía Panamá, which are **not active products**.
+> The current official product scope is: **KMediaFilms · En la Galería de Ana · DRIVIP**
+>
+> For current state, see:
+> - `docs/wedo-os-operating-model.md`
+> - `docs/n8n-safe-activation-plan.md`
+> - `docs/production-readiness-checklist.md`
+
+---
+
 # n8n Activation Results — WEDO Meta OS
 
 **Fecha:** 2026-06-12
