@@ -1,0 +1,60 @@
+{
+  "name": "campaign-reporting",
+  "description": "Genera reportes de campañas por marca y reporte consolidado. Solo lectura — no ejecuta cambios.",
+  "trigger": { "type": "schedule", "cron": "0 8 * * 1", "note": "Cada lunes a las 8am, o manual" },
+  "nodes": [
+    { "id": "1", "name": "Schedule Trigger" },
+    { "id": "2", "name": "Get Active Brands", "type": "n8n-nodes-base.code", "parameters": { "note": "Listar marcas activas desde brand-configs" } },
+    {
+      "id": "3",
+      "name": "Loop Per Brand",
+      "type": "n8n-nodes-base.splitInBatches",
+      "parameters": { "batchSize": 1 }
+    },
+    {
+      "id": "4",
+      "name": "Get Campaigns from Meta",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "parameters": {
+        "node": "adAccount",
+        "operation": "getCampaigns",
+        "note": "GET /{ad_account_id}/campaigns?fields=id,name,objective,status,daily_budget,lifetime_budget"
+      }
+    },
+    {
+      "id": "5",
+      "name": "Get Campaign Insights",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "parameters": {
+        "note": "GET /{campaign_id}/insights?fields=spend,impressions,reach,frequency,ctr,cpc,cpm,actions&date_preset=last_7d"
+      }
+    },
+    {
+      "id": "6",
+      "name": "Claude: Analyze Campaigns",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": { "note": "Llamar a ads-analyst agent con las métricas obtenidas" }
+    },
+    {
+      "id": "7",
+      "name": "Claude: Generate Brand Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": { "note": "Generar reporte en formato estándar para la marca" }
+    },
+    { "id": "8", "name": "Save Brand Report", "type": "n8n-nodes-base.googleSheets" },
+    {
+      "id": "9",
+      "name": "Claude: Generate Consolidated Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": { "note": "Consolidar reportes de todas las marcas para Ricardo" }
+    },
+    { "id": "10", "name": "Save Master Report", "type": "n8n-nodes-base.googleSheets" },
+    {
+      "id": "11",
+      "name": "Send Report to Ricardo",
+      "type": "n8n-nodes-base.whatsApp",
+      "parameters": { "note": "Entregar reporte consolidado a Ricardo" }
+    }
+  ],
+  "important_note": "Este workflow es SOLO LECTURA. No modifica campañas. Los cambios requieren aprobación humana explícita."
+}

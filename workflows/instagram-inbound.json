@@ -1,0 +1,104 @@
+{
+  "name": "instagram-inbound",
+  "description": "Procesa mensajes, comentarios y story replies de Instagram por marca.",
+  "trigger": {
+    "type": "sub_workflow",
+    "called_from": "meta-webhook-router",
+    "input_required": ["brand_id", "event_type", "normalized_event"]
+  },
+  "nodes": [
+    { "id": "1", "name": "Input", "type": "trigger", "note": "Recibe evento ya ruteado con brand_id" },
+    {
+      "id": "2",
+      "name": "Load Brand Config",
+      "type": "n8n-nodes-base.readBinaryFiles",
+      "parameters": {
+        "filePath": "brands/={{$json.brand_id}}/brand-config.json",
+        "note": "Cargar configuración de la marca para usar en el resto del flujo"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Save Inbound Message",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": {
+        "operation": "append",
+        "note": "Guardar en CRM de la marca con brand_id, timestamp, sender, mensaje, canal"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Claude: Classify Intent",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "note": "Llamar a Claude con el agente instagram-inbox-agent para clasificar intención",
+        "body": {
+          "model": "claude-sonnet-4-6",
+          "system": "Eres el instagram-inbox-agent. Clasificar intención del mensaje recibido.",
+          "messages": [{ "role": "user", "content": "={{$json.message_text}}" }]
+        }
+      }
+    },
+    {
+      "id": "5",
+      "name": "Requires Human?",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": { "boolean": [{ "value1": "={{$json.requires_human}}", "value2": true }] }
+      }
+    },
+    {
+      "id": "6",
+      "name": "Claude: Generate Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "note": "Generar respuesta con copy-conversion-agent usando el tono de la marca",
+        "model": "claude-sonnet-4-6"
+      }
+    },
+    {
+      "id": "7",
+      "name": "Safe to Send?",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "note": "Verificar que no es duplicado, no es spam, dentro del horario permitido"
+      }
+    },
+    {
+      "id": "8",
+      "name": "Send Instagram Reply",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "parameters": {
+        "note": "Enviar respuesta por Graph API — endpoint: /v21.0/{message_id}/replies o /{ig_user_id}/messages"
+      }
+    },
+    {
+      "id": "9",
+      "name": "Update CRM",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": { "operation": "update", "note": "Actualizar estado del lead y próximo seguimiento" }
+    },
+    {
+      "id": "10",
+      "name": "Create Approval Request",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "parameters": {
+        "workflowId": "human-approval",
+        "note": "Ejecutar solo cuando requires_human = true"
+      }
+    },
+    {
+      "id": "11",
+      "name": "Log Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": { "operation": "append", "note": "Siempre loguear el resultado del procesamiento" }
+    }
+  ],
+  "credentials_required": [
+    "Anthropic API Key",
+    "Facebook Graph API (con permiso instagram_manage_messages)",
+    "Google Sheets"
+  ]
+}

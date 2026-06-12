@@ -1,0 +1,110 @@
+{
+  "name": "whatsapp-inbound",
+  "description": "Procesa mensajes de WhatsApp con todas las validaciones de compliance.",
+  "trigger": {
+    "type": "whatsapp_trigger",
+    "note": "Trigger nativo de WhatsApp en n8n o llamado desde meta-webhook-router"
+  },
+  "nodes": [
+    { "id": "1", "name": "WhatsApp Trigger", "type": "n8n-nodes-base.whatsAppTrigger" },
+    {
+      "id": "2",
+      "name": "Detect Brand by Phone ID",
+      "type": "n8n-nodes-base.code",
+      "parameters": {
+        "note": "Mapear phone_number_id a brand_id usando mapa de configuración"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Load Brand Config",
+      "type": "n8n-nodes-base.readBinaryFiles",
+      "parameters": { "filePath": "brands/={{$json.brand_id}}/brand-config.json" }
+    },
+    {
+      "id": "4",
+      "name": "Check Opt-in",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": { "operation": "lookup", "note": "Verificar que el número tiene opt-in registrado" }
+    },
+    {
+      "id": "5",
+      "name": "Has Opt-in?",
+      "type": "n8n-nodes-base.if",
+      "parameters": { "note": "Sin opt-in → registrar y NO responder" }
+    },
+    {
+      "id": "6",
+      "name": "Check 24h Window",
+      "type": "n8n-nodes-base.code",
+      "parameters": { "jsCode": "// Verificar si el último mensaje del usuario fue hace menos de 24 horas\nconst lastMessage = $input.first().json.last_inbound_at;\nconst now = new Date();\nconst diff = now - new Date(lastMessage);\nconst withinWindow = diff < 24 * 60 * 60 * 1000;\nreturn { ...($input.first().json), within_24h_window: withinWindow };" }
+    },
+    {
+      "id": "7",
+      "name": "Check Do Not Contact",
+      "type": "n8n-nodes-base.googleSheets",
+      "parameters": { "operation": "lookup", "note": "Verificar lista de no contactar" }
+    },
+    {
+      "id": "8",
+      "name": "Claude: Compliance Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": { "note": "Validar con whatsapp-compliance-agent" }
+    },
+    {
+      "id": "9",
+      "name": "Claude: Classify Intent + Lead Scoring",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": { "note": "Clasificar intención y puntuar lead" }
+    },
+    {
+      "id": "10",
+      "name": "Requires Human?",
+      "type": "n8n-nodes-base.if"
+    },
+    {
+      "id": "11",
+      "name": "Claude: Generate Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": { "note": "Generar respuesta con tono de marca" }
+    },
+    {
+      "id": "12",
+      "name": "Within 24h Window?",
+      "type": "n8n-nodes-base.if"
+    },
+    {
+      "id": "13",
+      "name": "Send Free Form Message",
+      "type": "n8n-nodes-base.whatsApp",
+      "parameters": { "note": "Enviar mensaje libre (dentro de ventana)" }
+    },
+    {
+      "id": "14",
+      "name": "Send Approved Template",
+      "type": "n8n-nodes-base.whatsApp",
+      "parameters": { "note": "Enviar template aprobado (fuera de ventana)" }
+    },
+    {
+      "id": "15",
+      "name": "Update CRM",
+      "type": "n8n-nodes-base.googleSheets"
+    },
+    {
+      "id": "16",
+      "name": "Human Approval Flow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "parameters": { "workflowId": "human-approval" }
+    },
+    {
+      "id": "17",
+      "name": "Log Result",
+      "type": "n8n-nodes-base.googleSheets"
+    }
+  ],
+  "credentials_required": [
+    "WhatsApp Business Cloud (WABA ID + Phone Number ID + Access Token)",
+    "Anthropic API Key",
+    "Google Sheets"
+  ]
+}
