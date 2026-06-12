@@ -1,0 +1,314 @@
+{
+  "name": "Meta Asset Discovery - Read Only",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const required = ['META_ACCESS_TOKEN'];\nconst missing = required.filter((key) => !process.env[key]);\nif (missing.length) {\n  throw new Error(`Missing environment variables: ${missing.join(', ')}`);\n}\nreturn [{ json: {\n  access_token: process.env.META_ACCESS_TOKEN,\n  business_id: process.env.META_BUSINESS_ID || '',\n  graph_api_version: process.env.GRAPH_API_VERSION || 'v25.0',\n  graph_base: `https://graph.facebook.com/${process.env.GRAPH_API_VERSION || 'v25.0'}`\n}}];"
+      },
+      "id": "load-env",
+      "name": "Load Env",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{$json.graph_base}}/me/businesses",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name"
+            },
+            {
+              "name": "access_token",
+              "value": "={{$json.access_token}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-businesses",
+      "name": "Get Businesses",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const env = $('Load Env').first().json;\nconst businesses = $json.data || [];\nconst selected = env.business_id\n  ? (businesses.find((b) => b.id === env.business_id) || { id: env.business_id, name: 'Provided Business ID' })\n  : businesses[0];\nif (!selected?.id) {\n  throw new Error('No Business ID found. Provide META_BUSINESS_ID or fix token permissions for /me/businesses.');\n}\nreturn [{ json: { ...env, business: selected, available_businesses: businesses } }];"
+      },
+      "id": "select-business",
+      "name": "Select Business",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{$json.graph_base}}/{{$json.business.id}}/owned_pages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name,username,link"
+            },
+            {
+              "name": "access_token",
+              "value": "={{$json.access_token}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-owned-pages",
+      "name": "Get Owned Pages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        -220
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "={{$('Select Business').first().json.graph_base}}/{{$('Select Business').first().json.business.id}}/client_pages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name,username,link"
+            },
+            {
+              "name": "access_token",
+              "value": "={{$('Select Business').first().json.access_token}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-client-pages",
+      "name": "Get Client Pages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        -70
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "={{$('Select Business').first().json.graph_base}}/{{$('Select Business').first().json.business.id}}/owned_ad_accounts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name,account_id,account_status,currency,timezone_name"
+            },
+            {
+              "name": "access_token",
+              "value": "={{$('Select Business').first().json.access_token}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-owned-ad-accounts",
+      "name": "Get Owned Ad Accounts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        90
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "={{$('Select Business').first().json.graph_base}}/{{$('Select Business').first().json.business.id}}/client_ad_accounts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,name,account_id,account_status,currency,timezone_name"
+            },
+            {
+              "name": "access_token",
+              "value": "={{$('Select Business').first().json.access_token}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-client-ad-accounts",
+      "name": "Get Client Ad Accounts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        250
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "function normalizeText(value) {\n  return String(value || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();\n}\nfunction guessBrand(...values) {\n  const text = normalizeText(values.filter(Boolean).join(' '));\n  const rules = [\n    { brand_id: 'kmediafilms', patterns: ['kmedia', 'k media', 'kmediafilms', 'k media films'] },\n    { brand_id: 'en-la-galeria-de-ana', patterns: ['galeria de ana', 'en la galeria de ana', 'galeria ana', 'ana'] },\n    { brand_id: 'drivip', patterns: ['drivip', 'dri vip', 'driveip'] }\n  ];\n  const matches = rules.filter((rule) => rule.patterns.some((pattern) => text.includes(normalizeText(pattern))));\n  return matches.length === 1 ? matches[0].brand_id : 'needs_review';\n}\nconst selected = $('Select Business').first().json;\nconst ownedPages = $('Get Owned Pages').first().json.data || [];\nconst clientPages = $('Get Client Pages').first().json.data || [];\nconst ownedAdAccounts = $('Get Owned Ad Accounts').first().json.data || [];\nconst clientAdAccounts = $('Get Client Ad Accounts').first().json.data || [];\nconst pages = [\n  ...ownedPages.map((p) => ({ ...p, source: 'owned_pages' })),\n  ...clientPages.map((p) => ({ ...p, source: 'client_pages' }))\n].map((p) => ({\n  page_id: p.id || '',\n  page_name: p.name || '',\n  username: p.username || '',\n  link: p.link || '',\n  instagram_business_id: '',\n  source: p.source,\n  matched_brand_guess: guessBrand(p.name, p.username, p.link)\n}));\nconst ad_accounts = [\n  ...ownedAdAccounts.map((a) => ({ ...a, source: 'owned_ad_accounts' })),\n  ...clientAdAccounts.map((a) => ({ ...a, source: 'client_ad_accounts' }))\n].map((a) => ({\n  ad_account_id: a.id || (a.account_id ? `act_${a.account_id}` : ''),\n  account_id: a.account_id || String(a.id || '').replace(/^act_/, ''),\n  name: a.name || '',\n  status: String(a.account_status || ''),\n  currency: a.currency || '',\n  timezone_name: a.timezone_name || '',\n  source: a.source,\n  matched_brand_guess: guessBrand(a.name, a.id, a.account_id)\n}));\nconst brandNames = { kmediafilms: 'KMediaFilms', 'en-la-galeria-de-ana': 'En la Galería de Ana', drivip: 'DRIVIP' };\nconst brand_config_suggestions = Object.keys(brandNames).map((brand_id) => {\n  const page = pages.find((item) => item.matched_brand_guess === brand_id) || {};\n  const ad = ad_accounts.find((item) => item.matched_brand_guess === brand_id) || {};\n  return {\n    brand_id,\n    brand_name: brandNames[brand_id],\n    facebook_page_id: page.page_id || '',\n    instagram_business_id: page.instagram_business_id || '',\n    meta_ad_account_id: ad.ad_account_id || ''\n  };\n});\nreturn [{ json: {\n  business: selected.business,\n  available_businesses: selected.available_businesses,\n  pages,\n  ad_accounts,\n  brand_config_suggestions,\n  warnings: [\n    'This workflow does not enrich instagram_business_id per Page. Use scripts/meta-discover-assets.js for full enrichment.',\n    'Review all matched_brand_guess values manually.',\n    'No messages or ad changes were made.'\n  ]\n}}];"
+      },
+      "id": "build-output",
+      "name": "Build Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load Env",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Env": {
+      "main": [
+        [
+          {
+            "node": "Get Businesses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Businesses": {
+      "main": [
+        [
+          {
+            "node": "Select Business",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Business": {
+      "main": [
+        [
+          {
+            "node": "Get Owned Pages",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Client Pages",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Owned Ad Accounts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Client Ad Accounts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Owned Pages": {
+      "main": [
+        [
+          {
+            "node": "Build Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Client Pages": {
+      "main": [
+        [
+          {
+            "node": "Build Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Owned Ad Accounts": {
+      "main": [
+        [
+          {
+            "node": "Build Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Client Ad Accounts": {
+      "main": [
+        [
+          {
+            "node": "Build Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "versionId": "draft-meta-asset-discovery-read-only",
+  "triggerCount": 1,
+  "tags": [
+    {
+      "name": "WEDO Meta OS"
+    },
+    {
+      "name": "Read Only"
+    }
+  ]
+}
