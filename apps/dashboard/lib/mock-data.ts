@@ -1,4 +1,4 @@
-// WEDO Meta OS — Mock Data
+// WEDO Meta OS — Mock Data — SAFE MODE / READ ONLY
 // Used until Supabase credentials are configured.
 // Replace with real Supabase queries once SUPABASE_URL and keys are set.
 

@@ -1,3 +1,4 @@
+// SAFE MODE — READ ONLY test data. No real API calls, no message sends.
 /**
  * test-webhook-payloads.js
  * Payloads de prueba para simular eventos de Meta sin usar datos reales de clientes.

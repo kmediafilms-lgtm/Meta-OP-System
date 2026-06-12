@@ -48,7 +48,36 @@ function detectBrand(eventData) {
   return { brand_id: 'unidentified', method: 'no_match', action: 'escalate_to_human' };
 }
 
-// Parsear args
+// Self-test cases — run when no args provided
+const SELF_TESTS = [
+  { label: 'KMediaFilms via ig_id',  input: { ig_id: '17841400348662832' },          expected: 'kmediafilms' },
+  { label: 'Ana via ig_id',          input: { ig_id: '17841450875047591' },          expected: 'ana' },
+  { label: 'DRIVIP via ig_id',       input: { ig_id: '17841447217470964' },          expected: 'drivip' },
+  { label: 'Ana via page_id',        input: { page_id: '1043326452200695' },         expected: 'ana' },
+  { label: 'DRIVIP via page_id',     input: { page_id: '1158307954030806' },         expected: 'drivip' },
+  { label: 'KMedia via page_id',     input: { page_id: '1009115316143644' },         expected: 'kmediafilms' },
+  { label: 'Unknown (escalate)',      input: { ig_id: 'unknown_id_999' },             expected: 'unidentified' },
+];
+
+if (args.length === 0) {
+  console.log('\n=== ROUTE SELF-TEST ===');
+  let passed = 0;
+  let failed = 0;
+
+  for (const test of SELF_TESTS) {
+    const result = detectBrand(test.input);
+    const ok = result.brand_id === test.expected;
+    console.log(`  ${ok ? '✅' : '✗'} ${test.label}: ${result.brand_id} (expected: ${test.expected})`);
+    ok ? passed++ : failed++;
+  }
+
+  console.log(`\nResults: ${passed} passed, ${failed} failed`);
+  if (failed > 0) { process.exit(1); }
+  console.log('PASS: all brand routing tests passed.');
+  process.exit(0);
+}
+
+// Parsear args (single-event mode)
 const eventData = {};
 for (let i = 0; i < args.length; i++) {
   if (args[i].startsWith('--')) {
