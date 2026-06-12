@@ -6,3 +6,8 @@ config/credentials.json
 node_modules/
 *.log
 .DS_Store
+
+# Next.js build artifacts
+.next/
+out/
+next-env.d.ts
